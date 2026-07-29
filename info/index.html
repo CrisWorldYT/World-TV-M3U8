@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="es">
+    <script>(function(s){s.dataset.zone='11097226',s.src='https://nap5k.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
+    <head>
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" sizes="any" href="/favicon.ico">
+</head>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Info &bull; World TV</title>
+  <meta name="description" content="Conoc&eacute; m&aacute;s sobre World TV, nuestra propuesta, contenidos, canales de contacto y presencia digital.">
+  
+  <!-- Google ads-->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4411411548384970"
+     crossorigin="anonymous"></script>
+  <meta name="keywords" content="World TV, info, contacto, radio online, tv en vivo, streaming paraguay">
+  <meta name="author" content="iCrisWorld">
+  <meta name="theme-color" content="#050812">
+
+  <link rel="icon" href="/logo.png">
+  <link rel="manifest" href="manifest.json">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --c1:#1ad9ff;
+      --c2:#7d4dff;
+      --c3:#ff4aa2;
+
+      --bg:#050812;
+      --text:#f8fbff;
+      --muted:#aeb8d3;
+      --line:rgba(255,255,255,.08);
+
+      --shadow:0 18px 40px rgba(0,0,0,.30);
+      --shadow-soft:0 8px 20px rgba(0,0,0,.18);
+
+      --radius:26px;
+      --sidebar-w:252px;
+      --radio-h:84px;
+      --maxw:1140px;
+
+      --overlay:rgba(0,0,0,.68);
+    }
+
+    *{ box-sizing:border-box; margin:0; padding:0; }
+    html{ scroll-behavior:smooth; }
+    body{
+      font-family:'Inter',sans-serif;
+      color:var(--text);
+      min-height:100vh;
+      overflow-x:hidden;
+      background:var(--bg);
+      position:relative;
+    }
+
+    .bg-layer{
+      position:fixed;
+      inset:0;
+      z-index:-3;
+      overflow:hidden;
+      background:#050812;
+    }
+    .bg-layer img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      transform:translateZ(0);
+      will-change:transform;
+    }
+
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      z-index:-2;
+      background:var(--overlay);
+      pointer-events:none;
+    }
+
+    body::after{
+      content:"";
+      position:fixed;
+      inset:0;
+      z-index:-1;
+      pointer-events:none;
+      background:
+        linear-gradient(rgba(255,255,255,.016) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.016) 1px, transparent 1px);
+      background-size:42px 42px;
+      opacity:.5;
+      mask-image:linear-gradient(to bottom, rgba(255,255,255,.65), transparent);
+    }
+
+    a{ color:inherit; text-decoration:none; }
+    img{ display:block; max-width:100%; }
+    button,input{ font:inherit; }
+
+    ::-webkit-scrollbar{ width:10px; }
+    ::-webkit-scrollbar-thumb{ background:linear-gradient(var(--c1),var(--c2)); border-radius:999px; }
+    ::-webkit-scrollbar-track{ background:#070a13; }
+
+    /* MENU MOBILE */
+    .menu-btn{
+      display:none;
+      position:fixed;
+      top:14px; left:14px;
+      z-index:1600;
+      width:48px; height:48px;
+      border:none;
+      border-radius:16px;
+      background:rgba(14,20,34,.96);
+      border:1px solid var(--line);
+      box-shadow:var(--shadow-soft);
+      align-items:center;
+      justify-content:center;
+      flex-direction:column;
+      gap:5px;
+      cursor:pointer;
+    }
+    .menu-btn span{
+      width:24px; height:3px;
+      border-radius:999px;
+      background:#fff;
+      transition:.25s ease;
+    }
+    .menu-btn.active span:nth-child(1){ transform:translateY(8px) rotate(45deg); }
+    .menu-btn.active span:nth-child(2){ opacity:0; }
+    .menu-btn.active span:nth-child(3){ transform:translateY(-8px) rotate(-45deg); }
+
+    /* SIDEBAR */
+    .sidebar{
+      position:fixed;
+      top:0; left:0;
+      width:var(--sidebar-w);
+      height:100vh;
+      padding:18px 14px 16px;
+      overflow-y:auto;
+      background:rgba(8,12,22,.92);
+      border-right:1px solid var(--line);
+      z-index:1200;
+    }
+    @supports (backdrop-filter:blur(10px)){
+      .sidebar{ backdrop-filter:blur(10px); }
+    }
+    .sidebar::-webkit-scrollbar{ width:8px; }
+    .sidebar::-webkit-scrollbar-thumb{ background:linear-gradient(var(--c1),var(--c2)); border-radius:999px; }
+
+    .brand-box{
+      text-align:center;
+      padding:12px 8px 18px;
+      border-bottom:1px solid rgba(255,255,255,.06);
+      margin-bottom:14px;
+    }
+    .logo{
+      width:72px; height:72px;
+      margin:0 auto 12px;
+      border-radius:22px;
+      display:grid;
+      place-items:center;
+      background:linear-gradient(135deg, rgba(26,217,255,.14), rgba(125,77,255,.18));
+      border:1px solid rgba(255,255,255,.08);
+      box-shadow:0 12px 26px rgba(0,0,0,.18);
+    }
+    .logo img{ width:44px; height:44px; object-fit:contain; }
+    .brand-title{
+      font-family:'Outfit',sans-serif;
+      font-size:2rem;
+      font-weight:800;
+      line-height:1;
+      letter-spacing:.3px;
+      background:linear-gradient(90deg,var(--c1),#8fd5ff,var(--c2));
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+    }
+    .brand-sub{
+      margin-top:8px;
+      color:var(--muted);
+      font-size:.92rem;
+    }
+
+    .nav{ display:flex; flex-direction:column; gap:8px; }
+    .nav a{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:13px 14px;
+      border-radius:16px;
+      border:1px solid transparent;
+      color:#f7f9ff;
+      font-weight:600;
+      transition:.2s ease;
+    }
+    .nav a:hover{
+      background:rgba(255,255,255,.04);
+      border-color:rgba(255,255,255,.06);
+    }
+    .nav a.active{
+      background:rgba(26,217,255,.07);
+      border-color:rgba(26,217,255,.14);
+      color:var(--c1);
+    }
+
+    .user-panel{
+      margin-top:16px;
+      padding:12px;
+      border-radius:18px;
+      background:rgba(255,255,255,.03);
+      border:1px solid var(--line);
+    }
+    .login-helper{
+      text-align:center;
+      color:var(--muted);
+      font-size:.78rem;
+      margin-bottom:8px;
+    }
+    #googleLogin{
+      display:flex;
+      justify-content:center;
+      min-height:40px;
+      overflow:hidden;
+    }
+    .user-info{ display:flex; align-items:center; gap:10px; }
+    .user-info img{
+      width:40px; height:40px;
+      border-radius:50%;
+      object-fit:cover;
+      flex-shrink:0;
+    }
+    .user-info strong{ display:block; font-size:.9rem; line-height:1.2; }
+    .user-info span{
+      display:block;
+      font-size:.76rem;
+      color:var(--muted);
+      line-height:1.2;
+      word-break:break-word;
+    }
+    .logout-btn{
+      margin-top:10px;
+      width:100%;
+      padding:10px 12px;
+      border:none;
+      border-radius:14px;
+      background:linear-gradient(90deg, rgba(255,74,162,.20), rgba(125,77,255,.20));
+      color:#fff;
+      font-weight:700;
+      cursor:pointer;
+    }
+
+    /* MAIN */
+    .main{
+      margin-left:var(--sidebar-w);
+      padding:20px 26px 60px;
+    }
+
+    /* TOPBAR */
+    .topbar{
+      max-width:var(--maxw);
+      margin:0 auto 18px;
+      padding:14px 16px;
+      border-radius:18px;
+      border:1px solid var(--line);
+      background:rgba(8,12,22,.42);
+      box-shadow:var(--shadow-soft);
+    }
+    @supports (backdrop-filter:blur(10px)){
+      .topbar{ backdrop-filter:blur(10px); }
+    }
+    .brandline{ display:flex; justify-content:center; }
+    .brandmark{ display:flex; align-items:center; gap:12px; }
+    .brandicon{
+      width:44px; height:44px;
+      border-radius:14px;
+      background:rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.08);
+      padding:8px;
+    }
+    .brandtext{ text-align:left; line-height:1.05; }
+    .brandname{
+      font-family:'Outfit',sans-serif;
+      font-weight:800;
+      font-size:1.55rem;
+      letter-spacing:.6px;
+      background:linear-gradient(90deg,var(--c1),#b2e6ff,var(--c2),var(--c3));
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+    }
+    .brandtag{ margin-top:4px; font-size:.85rem; color:var(--muted); }
+    .topmeta{
+      margin-top:10px;
+      text-align:center;
+      font-size:.88rem;
+      color:rgba(255,255,255,.72);
+      border-top:1px solid rgba(255,255,255,.06);
+      padding-top:10px;
+    }
+
+    /* CARD BASE */
+    .card{
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.055), rgba(255,255,255,.028)),
+        linear-gradient(180deg, rgba(255,255,255,.02), transparent);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+    }
+
+    /* HERO */
+    .hero{
+      max-width:var(--maxw);
+      margin:0 auto 24px;
+      padding:36px 34px;
+      text-align:center;
+    }
+    .hero h1{
+      font-family:'Outfit',sans-serif;
+      font-size:clamp(2rem,4vw,3rem);
+      font-weight:800;
+      line-height:1;
+      letter-spacing:-.03em;
+      background:linear-gradient(90deg,var(--c1),#a4deff,var(--c2),var(--c3));
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      margin-bottom:16px;
+    }
+    .hero p{
+      color:var(--muted);
+      font-size:1rem;
+      line-height:1.85;
+      max-width:820px;
+      margin:0 auto;
+    }
+
+    /* INFO BOX */
+    .info-box{
+      max-width:var(--maxw);
+      margin:0 auto 22px;
+      padding:28px 32px;
+    }
+    .info-box h2{
+      font-family:'Outfit',sans-serif;
+      font-size:1.55rem;
+      font-weight:800;
+      margin-bottom:14px;
+      background:linear-gradient(90deg,var(--c1),var(--c2));
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+    }
+    .info-box p{
+      color:var(--muted);
+      line-height:1.9;
+      margin-bottom:14px;
+      font-size:.97rem;
+    }
+    .info-box p:last-child{ margin-bottom:0; }
+
+    /* FEATURES GRID */
+    .section-title{
+      max-width:var(--maxw);
+      margin:0 auto 14px;
+      font-family:'Outfit',sans-serif;
+      font-size:1.35rem;
+      font-weight:800;
+      letter-spacing:.2px;
+    }
+
+    .features{
+      max-width:var(--maxw);
+      margin:0 auto 28px;
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+      gap:18px;
+    }
+    .feature-card{
+      padding:24px;
+      transition:.3s ease;
+    }
+    .feature-card:hover{ transform:translateY(-5px); }
+    .feature-icon{
+      font-size:2rem;
+      margin-bottom:12px;
+    }
+    .feature-card h3{
+      font-family:'Outfit',sans-serif;
+      font-size:1.1rem;
+      font-weight:700;
+      margin-bottom:10px;
+      background:linear-gradient(90deg,var(--c1),var(--c2));
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+    }
+    .feature-card p{
+      color:var(--muted);
+      line-height:1.75;
+      font-size:.94rem;
+    }
+
+    /* CONTACT CARDS */
+    .contact-grid{
+      max-width:var(--maxw);
+      margin:0 auto 34px;
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+      gap:18px;
+    }
+    .contact-card{
+      overflow:hidden;
+      display:flex;
+      flex-direction:column;
+      transition:.3s ease;
+    }
+    .contact-card:hover{ transform:translateY(-6px); box-shadow:0 20px 40px rgba(26,217,255,.10); }
+    .contact-card-media{
+      padding:28px 28px 10px;
+      display:flex;
+      justify-content:center;
+    }
+    .contact-card-media img{
+      width:80px; height:80px;
+      object-fit:contain;
+      filter:drop-shadow(0 8px 16px rgba(0,0,0,.3));
+    }
+    .contact-card-body{
+      padding:10px 22px 26px;
+      text-align:center;
+      flex:1;
+      display:flex;
+      flex-direction:column;
+    }
+    .contact-card h3{
+      font-family:'Outfit',sans-serif;
+      font-size:1.12rem;
+      font-weight:700;
+      margin-bottom:10px;
+      background:linear-gradient(90deg,var(--c1),var(--c2));
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+    }
+    .contact-card p{
+      color:var(--muted);
+      line-height:1.75;
+      font-size:.94rem;
+      margin-bottom:18px;
+      flex:1;
+    }
+    .contact-btn{
+      margin-top:auto;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      padding:13px 20px;
+      border-radius:999px;
+      font-weight:700;
+      font-size:.92rem;
+      transition:.2s ease;
+      border:1px solid transparent;
+    }
+    .contact-btn:hover{ transform:translateY(-2px); }
+    .btn-whatsapp{ background:#1ad9ff; color:#08121b; }
+    .btn-instagram{ background:linear-gradient(90deg,var(--c2),var(--c3)); color:#fff; }
+    .btn-spotify{ background:#1DB954; color:#081019; }
+
+    footer{
+      max-width:var(--maxw);
+      margin:0 auto;
+      text-align:center;
+      padding:20px 10px 8px;
+      color:rgba(255,255,255,.58);
+      font-size:.92rem;
+    }
+
+    /* WHATSAPP */
+    .whatsapp{
+      position:fixed;
+      right:16px;
+      bottom:24px;
+      z-index:1300;
+    }
+    .whatsapp img{
+      width:58px; height:58px;
+      border-radius:50%;
+      box-shadow:0 12px 24px rgba(0,0,0,.22);
+      transition:.25s ease;
+    }
+    .whatsapp img:hover{ transform:scale(1.08) translateY(-2px); }
+
+    /* RESPONSIVE */
+    @media (max-width:900px){
+      .menu-btn{ display:flex; }
+      .sidebar{
+        left:calc(-1 * var(--sidebar-w) - 20px);
+        transition:left .25s ease;
+      }
+      .sidebar.active{ left:0; }
+      .main{ margin-left:0; padding:82px 14px 40px; }
+      .brandname{ font-size:1.35rem; }
+      .topmeta{ font-size:.84rem; }
+      .hero{ padding:24px 18px; }
+      .info-box{ padding:22px 18px; }
+      .user-info span{ display:none; }
+      #googleLogin .g_id_signin{ transform:scale(.9); transform-origin:center top; }
+    }
+
+    @media (max-width:700px){
+      body::after{ display:none; }
+      .card, .sidebar, .menu-btn{ box-shadow:none; }
+    }
+
+    @media (prefers-reduced-motion:reduce){
+      *,*::before,*::after{
+        animation:none !important;
+        transition:none !important;
+        scroll-behavior:auto !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="bg-layer" aria-hidden="true">
+    <img id="bgGif"
+         src="https://i.pinimg.com/originals/2d/97/4d/2d974d71915c2bf72d30ef60f8731267.gif"
+         alt=""
+         decoding="async"
+         fetchpriority="high">
+  </div>
+
+  <button class="menu-btn" id="menuBtn" aria-label="Abrir men&uacute;" aria-expanded="false" aria-controls="menu">
+    <span></span><span></span><span></span>
+  </button>
+
+  <nav class="sidebar" id="menu" aria-label="Men&uacute; principal">
+    <div class="brand-box">
+      <div class="logo">
+        <img src="/logo.png" alt="World TV logo">
+      </div>
+      <div class="brand-title">WORLD TV</div>
+      <div class="brand-sub">Radio &amp; TV Online</div>
+    </div>
+
+    <div class="nav">
+      <a href="">&#127968; Inicio</a>
+      <a href="/en-vivo">&#128250; En Vivo</a>
+      <a href="/radio">&#127911; Radio</a>
+      <a href="/noticias">&#128240; Noticias</a>
+      <a href="/politica-de-privacidad">&#128274; Privacidad</a>
+      <a href="#" class="active">&#8505;&#65039; Info</a>
+    </div>
+
+    <div class="user-panel">
+      <p class="login-helper">Acceso r&aacute;pido</p>
+      <div id="googleLogin"></div>
+      <div id="userContent"></div>
+    </div>
+  </nav>
+
+  <main class="main">
+    <header class="topbar" role="banner">
+      <div class="brandline">
+        <div class="brandmark">
+          <img class="brandicon" src="/logo.png" alt="World TV">
+          <div class="brandtext">
+            <div class="brandname">WORLD TV</div>
+            <div class="brandtag">Radio &amp; TV Online</div>
+          </div>
+        </div>
+      </div>
+      <div class="topmeta">Se&ntilde;al en vivo &bull; Radio online &bull; Noticias</div>
+    </header>
+
+    <section class="hero card">
+      <h1>Sobre World TV</h1>
+      <p>
+        World TV es un espacio digital dedicado a compartir transmisi&oacute;n en vivo, radio online,
+        noticias y contenidos vinculados al entretenimiento, la m&uacute;sica y la actualidad.
+        Nuestro objetivo es acercar una propuesta activa, accesible y en constante movimiento
+        para quienes buscan una experiencia conectada durante todo el d&iacute;a.
+      </p>
+    </section>
+
+    <section class="info-box card">
+      <h2>Qui&eacute;nes somos</h2>
+      <p>
+        World TV re&uacute;ne distintos formatos de comunicaci&oacute;n en una sola propuesta:
+        se&ntilde;al en vivo, radio online, noticias, presencia en redes y contenidos pensados
+        para acompa&ntilde;ar a la audiencia en diferentes momentos del d&iacute;a.
+      </p>
+      <p>
+        El proyecto nace con la intenci&oacute;n de ofrecer una plataforma abierta, cercana y din&aacute;mica,
+        capaz de conectar con personas interesadas en la m&uacute;sica, la informaci&oacute;n, el entretenimiento
+        y todo aquello que forma parte del entorno digital actual.
+      </p>
+    </section>
+
+    <section class="info-box card">
+      <h2>Lo que buscamos ofrecer</h2>
+      <p>
+        Buscamos que World TV sea una experiencia que combine compa&ntilde;&iacute;a, actualizaci&oacute;n constante
+        y acceso simple al contenido. Tanto en la radio como en la se&ntilde;al en vivo y en la secci&oacute;n
+        de noticias, la idea es mantener un flujo activo de publicaci&oacute;n y comunicaci&oacute;n con la audiencia.
+      </p>
+      <p>
+        M&aacute;s que una sola p&aacute;gina, World TV se plantea como un punto de encuentro entre contenidos,
+        transmisi&oacute;n y comunidad, donde cada secci&oacute;n cumple una funci&oacute;n distinta pero conectada.
+      </p>
+    </section>
+
+    <h2 class="section-title">Lo que encontr&aacute;s en World TV</h2>
+    <section class="features">
+      <article class="feature-card card">
+        <div class="feature-icon">&#128250;</div>
+        <h3>Transmisi&oacute;n en vivo</h3>
+        <p>Acceso a la se&ntilde;al en directo para seguir programaci&oacute;n, bloques especiales y contenidos emitidos en tiempo real.</p>
+      </article>
+
+      <article class="feature-card card">
+        <div class="feature-icon">&#127911;</div>
+        <h3>Radio online</h3>
+        <p>Una se&ntilde;al continua para acompa&ntilde;ar la jornada con m&uacute;sica, segmentos tem&aacute;ticos y presencia constante las 24 horas.</p>
+      </article>
+
+      <article class="feature-card card">
+        <div class="feature-icon">&#128240;</div>
+        <h3>Noticias y actualidad</h3>
+        <p>Publicaciones orientadas a entretenimiento, m&uacute;sica, cultura digital y temas de la conversaci&oacute;n diaria.</p>
+      </article>
+
+      <article class="feature-card card">
+        <div class="feature-icon">&#128172;</div>
+        <h3>Conexi&oacute;n directa</h3>
+        <p>Canales abiertos para consultas, colaboraciones, promociones y contacto con la audiencia a trav&eacute;s de redes y mensajer&iacute;a.</p>
+      </article>
+    </section>
+
+    <section class="info-box card">
+      <h2>Presencia y comunidad</h2>
+      <p>
+        World TV no se limita a una sola se&ntilde;al. Tambi&eacute;n mantiene presencia a trav&eacute;s de redes sociales,
+        playlists y canales de contacto que permiten una relaci&oacute;n m&aacute;s cercana con quienes siguen el proyecto.
+      </p>
+      <p>
+        La intenci&oacute;n es que cada persona pueda encontrar la forma m&aacute;s c&oacute;moda de acercarse al contenido:
+        viendo, escuchando, leyendo o siguiendo las novedades desde distintas plataformas.
+      </p>
+    </section>
+
+    <section class="info-box card">
+      <h2>Contacto</h2>
+      <p>
+        Si quer&eacute;s comunicarte con World TV por consultas, propuestas, colaboraciones, difusi&oacute;n
+        o informaci&oacute;n general, pod&eacute;s hacerlo a trav&eacute;s de nuestros canales oficiales.
+      </p>
+      <p>
+        Estamos abiertos a nuevas ideas, alianzas, proyectos y oportunidades que ayuden a seguir
+        ampliando la propuesta y fortaleciendo el v&iacute;nculo con la audiencia.
+      </p>
+    </section>
+
+    <h2 class="section-title">Canales oficiales</h2>
+    <section class="contact-grid">
+      <article class="contact-card card">
+        <div class="contact-card-media">
+          <img src="https://cdn-icons-png.flaticon.com/512/733/733585.png" alt="WhatsApp Oficial">
+        </div>
+        <div class="contact-card-body">
+          <h3>WhatsApp Oficial</h3>
+          <p>Canal directo para consultas, promociones, colaboraciones y comunicaci&oacute;n r&aacute;pida con World TV.</p>
+          <a class="contact-btn btn-whatsapp" href="https://wa.me/595981197962" target="_blank" rel="noopener noreferrer">
+            +595 981197962
+          </a>
+        </div>
+      </article>
+
+      <article class="contact-card card">
+        <div class="contact-card-media">
+          <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram">
+        </div>
+        <div class="contact-card-body">
+          <h3>Instagram</h3>
+          <p>Espacio para novedades, publicaciones, clips, anuncios y momentos destacados del proyecto.</p>
+          <a class="contact-btn btn-instagram" href="https://instagram.com/world.tv2026" target="_blank" rel="noopener noreferrer">
+            @world.tv2026
+          </a>
+        </div>
+      </article>
+
+      <article class="contact-card card">
+        <div class="contact-card-media">
+          <img src="https://cdn-icons-png.flaticon.com/512/174/174872.png" alt="Spotify">
+        </div>
+        <div class="contact-card-body">
+          <h3>Spotify</h3>
+          <p>Playlist y selecci&oacute;n musical para seguir escuchando parte del universo sonoro de World TV.</p>
+          <a class="contact-btn btn-spotify" href="https://open.spotify.com/user/31gg6dercej65i77lox322zt26mq?si=25toIgPwRqWwFc9u3IIRFQ" target="_blank" rel="noopener noreferrer">
+            World TV en Spotify
+          </a>
+        </div>
+      </article>
+    </section>
+
+    <footer>&copy; 2026 WORLD TV &bull; Todos los derechos reservados</footer>
+  </main>
+
+  <a class="whatsapp" href="https://wa.me/595981197962" target="_blank" rel="noopener noreferrer" aria-label="Contactar por WhatsApp">
+    <img src="https://i.imgur.com/GxDs6Iu.png" alt="WhatsApp">
+  </a>
+
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+  <script>
+    // Fondo GIF fallback
+    (function(){
+      const bg = document.getElementById('bgGif');
+      if(!bg) return;
+      const fallback = "https://images.unsplash.com/photo-1444703686981-a3abbc4d4fe3?auto=format&fit=crop&w=1600&q=60";
+      const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const saveData = navigator.connection && navigator.connection.saveData;
+      if(reduceMotion || saveData){ bg.src = fallback; return; }
+      bg.addEventListener('error', () => { bg.src = fallback; }, { once:true });
+    })();
+
+    // MENU
+    const menuBtn = document.getElementById("menuBtn");
+    const sidebar = document.getElementById("menu");
+    menuBtn.addEventListener("click", () => {
+      const isActive = sidebar.classList.toggle("active");
+      menuBtn.classList.toggle("active");
+      menuBtn.setAttribute("aria-expanded", isActive ? "true" : "false");
+    });
+
+    // GOOGLE LOGIN
+    function parseJwt(token) {
+      try {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(
+          atob(base64).split('').map(c =>
+            '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
+          ).join('')
+        );
+        return JSON.parse(jsonPayload);
+      } catch(e){ return null; }
+    }
+
+    function renderUser() {
+      const user = JSON.parse(localStorage.getItem("user"));
+      const userContent = document.getElementById("userContent");
+      const googleLogin = document.getElementById("googleLogin");
+      if (user) {
+        googleLogin.innerHTML = "";
+        userContent.innerHTML = `
+          <div class="user-info">
+            <img src="${user.picture}" alt="${user.name}">
+            <div>
+              <strong>${user.name}</strong>
+              <span>${user.email || ""}</span>
+            </div>
+          </div>
+          <button class="logout-btn" onclick="logout()">Cerrar sesi&oacute;n</button>
+        `;
+      } else {
+        userContent.innerHTML = "";
+        googleLogin.innerHTML = `
+          <div id="g_id_onload"
+               data-client_id="800480031911-hlt4o267laeuodtj8fi6op1gei9skv9j.apps.googleusercontent.com"
+               data-context="signin"
+               data-ux_mode="popup"
+               data-callback="handleCredentialResponse"
+               data-auto_prompt="false"></div>
+          <div class="g_id_signin"
+               data-type="standard"
+               data-shape="pill"
+               data-theme="filled_black"
+               data-text="continue_with"
+               data-size="medium"
+               data-logo_alignment="left"
+               data-width="210"></div>
+        `;
+      }
+    }
+
+    function handleCredentialResponse(response) {
+      const data = parseJwt(response.credential);
+      if (!data) return;
+      localStorage.setItem("user", JSON.stringify(data));
+      alert("Bienvenido " + (data.name || "usuario"));
+      renderUser();
+    }
+
+    function logout() {
+      localStorage.removeItem("user");
+      renderUser();
+    }
+
+    window.handleCredentialResponse = handleCredentialResponse;
+    window.logout = logout;
+    renderUser();
+  </script>
+</body>
+</html>
