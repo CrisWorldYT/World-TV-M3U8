@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="es">
+    <script>(function(s){s.dataset.zone='11097226',s.src='https://nap5k.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
+    <head>
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" sizes="any" href="/favicon.ico">
+</head>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pol&iacute;tica de Privacidad &bull; World TV</title>
+  <meta name="description" content="Pol&iacute;tica de privacidad de World TV. Informaci&oacute;n sobre uso de datos, autenticaci&oacute;n y servicios digitales.">
+  <meta name="theme-color" content="#050812">
+
+  <link rel="icon" href="/logo.png" />
+  <link rel="manifest" href="manifest.json">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --c1:#1ad9ff;
+      --c2:#7d4dff;
+      --c3:#ff4aa2;
+
+      --bg:#050812;
+      --text:#f8fbff;
+      --muted:#aeb8d3;
+      --line:rgba(255,255,255,.08);
+
+      --shadow:0 18px 40px rgba(0,0,0,.30);
+      --shadow-soft:0 8px 20px rgba(0,0,0,.18);
+
+      --radius:26px;
+      --sidebar-w:252px;
+      --maxw:1140px;
+
+      --overlay:rgba(0,0,0,.68);
+    }
+
+    *{ box-sizing:border-box; margin:0; padding:0; }
+    html{ scroll-behavior:smooth; }
+    body{
+      font-family:'Inter',sans-serif;
+      color:var(--text);
+      min-height:100vh;
+      overflow-x:hidden;
+      background:var(--bg);
+      position:relative;
+    }
+
+    .bg-layer{
+      position:fixed;
+      inset:0;
+      z-index:-3;
+      overflow:hidden;
+      background:#050812;
+    }
+    .bg-layer img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      transform:translateZ(0);
+      will-change:transform;
+    }
+
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      z-index:-2;
+      background:var(--overlay);
+      pointer-events:none;
+    }
+
+    body::after{
+      content:"";
+      position:fixed;
+      inset:0;
+      z-index:-1;
+      pointer-events:none;
+      background:
+        linear-gradient(rgba(255,255,255,.016) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.016) 1px, transparent 1px);
+      background-size:42px 42px;
+      opacity:.5;
+      mask-image:linear-gradient(to bottom, rgba(255,255,255,.65), transparent);
+    }
+
+    a{ color:inherit; text-decoration:none; }
+    img{ display:block; max-width:100%; }
+    button,input{ font:inherit; }
+
+    ::-webkit-scrollbar{ width:10px; }
+    ::-webkit-scrollbar-thumb{ background:linear-gradient(var(--c1),var(--c2)); border-radius:999px; }
+    ::-webkit-scrollbar-track{ background:#070a13; }
+
+    /* MENU MOBILE */
+    .menu-btn{
+      display:none;
+      position:fixed;
+      top:14px; left:14px;
+      z-index:1600;
+      width:48px; height:48px;
+      border:none;
+      border-radius:16px;
+      background:rgba(14,20,34,.96);
+      border:1px solid var(--line);
+      box-shadow:var(--shadow-soft);
+      align-items:center;
+      justify-content:center;
+      flex-direction:column;
+      gap:5px;
+      cursor:pointer;
+    }
+    .menu-btn span{
+      width:24px; height:3px;
+      border-radius:999px;
+      background:#fff;
+      transition:.25s ease;
+    }
+    .menu-btn.active span:nth-child(1){ transform:translateY(8px) rotate(45deg); }
+    .menu-btn.active span:nth-child(2){ opacity:0; }
+    .menu-btn.active span:nth-child(3){ transform:translateY(-8px) rotate(-45deg); }
+
+    /* SIDEBAR */
+    .sidebar{
+      position:fixed;
+      top:0; left:0;
+      width:var(--sidebar-w);
+      height:100vh;
+      padding:18px 14px 16px;
+      overflow-y:auto;
+      background:rgba(8,12,22,.92);
+      border-right:1px solid var(--line);
+      z-index:1200;
+    }
+    @supports (backdrop-filter:blur(10px)){
+      .sidebar{ backdrop-filter:blur(10px); }
+    }
+    .sidebar::-webkit-scrollbar{ width:8px; }
+    .sidebar::-webkit-scrollbar-thumb{ background:linear-gradient(var(--c1),var(--c2)); border-radius:999px; }
+
+    .brand-box{
+      text-align:center;
+      padding:12px 8px 18px;
+      border-bottom:1px solid rgba(255,255,255,.06);
+      margin-bottom:14px;
+    }
+    .logo{
+      width:72px; height:72px;
+      margin:0 auto 12px;
+      border-radius:22px;
+      display:grid;
+      place-items:center;
+      background:linear-gradient(135deg, rgba(26,217,255,.14), rgba(125,77,255,.18));
+      border:1px solid rgba(255,255,255,.08);
+      box-shadow:0 12px 26px rgba(0,0,0,.18);
+    }
+    .logo img{ width:44px; height:44px; object-fit:contain; }
+    .brand-title{
+      font-family:'Outfit',sans-serif;
+      font-size:2rem;
+      font-weight:800;
+      line-height:1;
+      letter-spacing:.3px;
+      background:linear-gradient(90deg,var(--c1),#8fd5ff,var(--c2));
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+    }
+    .brand-sub{
+      margin-top:8px;
+      color:var(--muted);
+      font-size:.92rem;
+    }
+
+    .nav{ display:flex; flex-direction:column; gap:8px; }
+    .nav a{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:13px 14px;
+      border-radius:16px;
+      border:1px solid transparent;
+      color:#f7f9ff;
+      font-weight:600;
+      transition:.2s ease;
+    }
+    .nav a:hover{
+      background:rgba(255,255,255,.04);
+      border-color:rgba(255,255,255,.06);
+    }
+    .nav a.active{
+      background:rgba(26,217,255,.07);
+      border-color:rgba(26,217,255,.14);
+      color:var(--c1);
+    }
+
+    .user-panel{
+      margin-top:16px;
+      padding:12px;
+      border-radius:18px;
+      background:rgba(255,255,255,.03);
+      border:1px solid var(--line);
+    }
+    .login-helper{
+      text-align:center;
+      color:var(--muted);
+      font-size:.78rem;
+      margin-bottom:8px;
+    }
+    #googleLogin{
+      display:flex;
+      justify-content:center;
+      min-height:40px;
+      overflow:hidden;
+    }
+    .user-info{ display:flex; align-items:center; gap:10px; }
+    .user-info img{
+      width:40px; height:40px;
+      border-radius:50%;
+      object-fit:cover;
+      flex-shrink:0;
+    }
+    .user-info strong{ display:block; font-size:.9rem; line-height:1.2; }
+    .user-info span{
+      display:block;
+      font-size:.76rem;
+      color:var(--muted);
+      line-height:1.2;
+      word-break:break-word;
+    }
+    .logout-btn{
+      margin-top:10px;
+      width:100%;
+      padding:10px 12px;
+      border:none;
+      border-radius:14px;
+      background:linear-gradient(90deg, rgba(255,74,162,.20), rgba(125,77,255,.20));
+      color:#fff;
+      font-weight:700;
+      cursor:pointer;
+    }
+
+    /* MAIN */
+    .main{
+      margin-left:var(--sidebar-w);
+      padding:20px 26px 60px;
+    }
+
+    /* TOPBAR */
+    .topbar{
+      max-width:var(--maxw);
+      margin:0 auto 18px;
+      padding:14px 16px;
+      border-radius:18px;
+      border:1px solid var(--line);
+      background:rgba(8,12,22,.42);
+      box-shadow:var(--shadow-soft);
+    }
+    @supports (backdrop-filter:blur(10px)){
+      .topbar{ backdrop-filter:blur(10px); }
+    }
+    .brandline{ display:flex; justify-content:center; }
+    .brandmark{ display:flex; align-items:center; gap:12px; }
+    .brandicon{
+      width:44px; height:44px;
+      border-radius:14px;
+      background:rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.08);
+      padding:8px;
+    }
+    .brandtext{ text-align:left; line-height:1.05; }
+    .brandname{
+      font-family:'Outfit',sans-serif;
+      font-weight:800;
+      font-size:1.55rem;
+      letter-spacing:.6px;
+      background:linear-gradient(90deg,var(--c1),#b2e6ff,var(--c2),var(--c3));
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+    }
+    .brandtag{ margin-top:4px; font-size:.85rem; color:var(--muted); }
+    .topmeta{
+      margin-top:10px;
+      text-align:center;
+      font-size:.88rem;
+      color:rgba(255,255,255,.72);
+      border-top:1px solid rgba(255,255,255,.06);
+      padding-top:10px;
+    }
+
+    /* CARD BASE */
+    .card{
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.055), rgba(255,255,255,.028)),
+        linear-gradient(180deg, rgba(255,255,255,.02), transparent);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+    }
+
+    /* HERO */
+    .hero{
+      max-width:var(--maxw);
+      margin:0 auto 24px;
+      padding:36px 34px;
+      text-align:center;
+    }
+    .hero h1{
+      font-family:'Outfit',sans-serif;
+      font-size:clamp(2rem,4vw,3rem);
+      font-weight:800;
+      line-height:1;
+      letter-spacing:-.03em;
+      background:linear-gradient(90deg,var(--c1),#a4deff,var(--c2),var(--c3));
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      margin-bottom:14px;
+    }
+    .hero p{
+      color:var(--muted);
+      font-size:1rem;
+      line-height:1.85;
+      max-width:800px;
+      margin:0 auto;
+    }
+
+    /* POLICY BOX */
+    .policy-box{
+      max-width:960px;
+      margin:0 auto 30px;
+      padding:36px 40px;
+      line-height:1.85;
+    }
+
+    .policy-meta{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      margin-bottom:22px;
+      padding:8px 16px;
+      border-radius:999px;
+      background:rgba(26,217,255,.07);
+      border:1px solid rgba(26,217,255,.14);
+      color:var(--muted);
+      font-size:.88rem;
+    }
+
+    .policy-box p{
+      color:var(--muted);
+      margin-bottom:16px;
+      font-size:.97rem;
+    }
+
+    .policy-box h3{
+      margin-top:30px;
+      margin-bottom:12px;
+      font-family:'Outfit',sans-serif;
+      font-size:1.12rem;
+      font-weight:700;
+      background:linear-gradient(90deg,var(--c1),var(--c2));
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+    }
+
+    .policy-box ul{
+      margin:10px 0 18px 22px;
+      color:var(--muted);
+      font-size:.96rem;
+    }
+    .policy-box li{
+      margin:8px 0;
+      line-height:1.7;
+    }
+
+    .policy-box strong{
+      color:#fff;
+    }
+
+    /* divider entre secciones */
+    .policy-divider{
+      margin:28px 0;
+      border:none;
+      border-top:1px solid rgba(255,255,255,.06);
+    }
+
+    footer{
+      max-width:var(--maxw);
+      margin:0 auto;
+      text-align:center;
+      padding:20px 10px 8px;
+      color:rgba(255,255,255,.58);
+      font-size:.92rem;
+    }
+
+    /* WHATSAPP */
+    .whatsapp{
+      position:fixed;
+      right:16px;
+      bottom:24px;
+      z-index:1300;
+    }
+    .whatsapp img{
+      width:58px; height:58px;
+      border-radius:50%;
+      box-shadow:0 12px 24px rgba(0,0,0,.22);
+      transition:.25s ease;
+    }
+    .whatsapp img:hover{ transform:scale(1.08) translateY(-2px); }
+
+    /* RESPONSIVE */
+    @media (max-width:900px){
+      .menu-btn{ display:flex; }
+      .sidebar{
+        left:calc(-1 * var(--sidebar-w) - 20px);
+        transition:left .25s ease;
+      }
+      .sidebar.active{ left:0; }
+      .main{ margin-left:0; padding:82px 14px 40px; }
+      .brandname{ font-size:1.35rem; }
+      .topmeta{ font-size:.84rem; }
+      .hero{ padding:24px 18px; }
+      .policy-box{ padding:24px 18px; }
+      .user-info span{ display:none; }
+      #googleLogin .g_id_signin{ transform:scale(.9); transform-origin:center top; }
+    }
+
+    @media (max-width:700px){
+      body::after{ display:none; }
+      .card, .sidebar, .menu-btn{ box-shadow:none; }
+    }
+
+    @media (prefers-reduced-motion:reduce){
+      *,*::before,*::after{
+        animation:none !important;
+        transition:none !important;
+        scroll-behavior:auto !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="bg-layer" aria-hidden="true">
+    <img id="bgGif"
+         src="https://i.pinimg.com/originals/2d/97/4d/2d974d71915c2bf72d30ef60f8731267.gif"
+         alt=""
+         decoding="async"
+         fetchpriority="high">
+  </div>
+
+  <button class="menu-btn" id="menuBtn" aria-label="Abrir men&uacute;" aria-expanded="false" aria-controls="menu">
+    <span></span><span></span><span></span>
+  </button>
+
+  <nav class="sidebar" id="menu" aria-label="Men&uacute; principal">
+    <div class="brand-box">
+      <div class="logo">
+        <img src="/logo.png" alt="World TV logo">
+      </div>
+      <div class="brand-title">WORLD TV</div>
+      <div class="brand-sub">Radio &amp; TV Online</div>
+    </div>
+
+    <div class="nav">
+      <a href="">&#127968; Inicio</a>
+      <a href="/en-vivo">&#128250; En Vivo</a>
+      <a href="/radio">&#127911; Radio</a>
+      <a href="/noticias">&#128240; Noticias</a>
+      <a href="#" class="active">&#128274; Privacidad</a>
+      <a href="/info">&#8505;&#65039; Info</a>
+    </div>
+
+    <div class="user-panel">
+      <p class="login-helper">Acceso r&aacute;pido</p>
+      <div id="googleLogin"></div>
+      <div id="userContent"></div>
+    </div>
+  </nav>
+
+  <main class="main">
+    <header class="topbar" role="banner">
+      <div class="brandline">
+        <div class="brandmark">
+          <img class="brandicon" src="/logo.png" alt="World TV">
+          <div class="brandtext">
+            <div class="brandname">WORLD TV</div>
+            <div class="brandtag">Radio &amp; TV Online</div>
+          </div>
+        </div>
+      </div>
+      <div class="topmeta">Se&ntilde;al en vivo &bull; Radio online &bull; Noticias</div>
+    </header>
+
+    <section class="hero card">
+      <h1>Pol&iacute;tica de Privacidad</h1>
+      <p>
+        En World TV protegemos la informaci&oacute;n de nuestros usuarios y trabajamos con transparencia
+        en el uso de datos, autenticaci&oacute;n y servicios digitales.
+      </p>
+    </section>
+
+    <section class="policy-box card">
+      <div class="policy-meta">
+        &#128197; <strong>&Uacute;ltima actualizaci&oacute;n:</strong>&nbsp;18 de Febrero de 2026
+      </div>
+
+      <p>
+        En <strong>World TV</strong>, valoramos y respetamos la privacidad de nuestros usuarios.
+        La presente Pol&iacute;tica de Privacidad describe c&oacute;mo recopilamos, utilizamos,
+        almacenamos y protegemos la informaci&oacute;n personal cuando util&iacute;s nuestro sitio web.
+        Al acceder y utilizar nuestros servicios, acept&aacute;s los t&eacute;rminos descritos en este documento.
+      </p>
+
+      <hr class="policy-divider">
+
+      <h3>1. Informaci&oacute;n que recopilamos</h3>
+      <p>
+        Podemos recopilar informaci&oacute;n personal cuando el usuario inicia sesi&oacute;n mediante
+        servicios de autenticaci&oacute;n externos como Google. Esta informaci&oacute;n puede incluir:
+      </p>
+      <ul>
+        <li>Nombre completo</li>
+        <li>Direcci&oacute;n de correo electr&oacute;nico</li>
+        <li>Imagen de perfil</li>
+        <li>Identificador &uacute;nico de usuario proporcionado por Google</li>
+      </ul>
+      <p>No recopilamos contrase&ntilde;as, datos financieros ni informaci&oacute;n sensible.</p>
+
+      <h3>2. Informaci&oacute;n recopilada autom&aacute;ticamente</h3>
+      <p>
+        Al navegar por nuestro sitio, podemos recopilar autom&aacute;ticamente cierta informaci&oacute;n t&eacute;cnica, como:
+      </p>
+      <ul>
+        <li>Direcci&oacute;n IP</li>
+        <li>Tipo de navegador</li>
+        <li>Sistema operativo</li>
+        <li>Dispositivo utilizado</li>
+        <li>P&aacute;ginas visitadas dentro del sitio</li>
+      </ul>
+      <p>Esta informaci&oacute;n se utiliza exclusivamente con fines estad&iacute;sticos y de mejora del servicio.</p>
+
+      <h3>3. Uso de la informaci&oacute;n</h3>
+      <p>La informaci&oacute;n recopilada se utiliza para:</p>
+      <ul>
+        <li>Identificar al usuario dentro de la plataforma</li>
+        <li>Personalizar la experiencia de navegaci&oacute;n</li>
+        <li>Mantener la sesi&oacute;n activa</li>
+        <li>Mejorar nuestros servicios y funcionalidades</li>
+        <li>Proporcionar soporte t&eacute;cnico</li>
+      </ul>
+      <p>No vendemos, alquilamos ni comercializamos la informaci&oacute;n personal de nuestros usuarios.</p>
+
+      <h3>4. Almacenamiento de datos</h3>
+      <p>La informaci&oacute;n puede almacenarse en:</p>
+      <ul>
+        <li>Almacenamiento local del navegador (localStorage)</li>
+        <li>Servicios de base de datos como Firebase</li>
+      </ul>
+      <p>Los datos se conservan &uacute;nicamente durante el tiempo necesario para cumplir con los fines descritos.</p>
+
+      <h3>5. Servicios de terceros</h3>
+      <p>World TV utiliza servicios externos como:</p>
+      <ul>
+        <li>Google Identity Services (para autenticaci&oacute;n)</li>
+        <li>Firebase (para almacenamiento y gesti&oacute;n de datos)</li>
+      </ul>
+      <p>
+        El uso de estos servicios est&aacute; sujeto a sus respectivas pol&iacute;ticas de privacidad.
+        Recomendamos revisar las pol&iacute;ticas oficiales de Google y Firebase para mayor informaci&oacute;n.
+      </p>
+
+      <h3>6. Cookies y tecnolog&iacute;as similares</h3>
+      <p>Podemos utilizar cookies o tecnolog&iacute;as similares para:</p>
+      <ul>
+        <li>Recordar preferencias del usuario</li>
+        <li>Mantener sesiones activas</li>
+        <li>Analizar el tr&aacute;fico del sitio</li>
+      </ul>
+      <p>
+        El usuario puede configurar su navegador para rechazar cookies,
+        aunque algunas funciones del sitio podr&iacute;an no funcionar correctamente.
+      </p>
+
+      <h3>7. Seguridad</h3>
+      <p>
+        Implementamos medidas t&eacute;cnicas y organizativas razonables para proteger la informaci&oacute;n personal.
+        Sin embargo, ning&uacute;n m&eacute;todo de transmisi&oacute;n o almacenamiento electr&oacute;nico es 100% seguro.
+      </p>
+
+      <h3>8. Derechos del usuario</h3>
+      <p>El usuario tiene derecho a:</p>
+      <ul>
+        <li>Solicitar acceso a su informaci&oacute;n</li>
+        <li>Solicitar correcci&oacute;n de datos incorrectos</li>
+        <li>Solicitar eliminaci&oacute;n de su informaci&oacute;n</li>
+        <li>Revocar el consentimiento de uso</li>
+      </ul>
+      <p>
+        Para ejercer estos derechos, el usuario puede contactarnos mediante los canales oficiales del sitio.
+      </p>
+
+      <h3>9. Enlaces externos</h3>
+      <p>
+        Nuestro sitio puede contener enlaces a sitios web externos.
+        No somos responsables de las pr&aacute;cticas de privacidad de dichos sitios.
+      </p>
+
+      <h3>10. Cambios en esta pol&iacute;tica</h3>
+      <p>
+        Nos reservamos el derecho de modificar esta Pol&iacute;tica de Privacidad en cualquier momento.
+        Las modificaciones ser&aacute;n publicadas en esta misma p&aacute;gina con fecha actualizada.
+      </p>
+
+      <h3>11. Contacto</h3>
+      <p>
+        Si ten&eacute;s preguntas sobre esta Pol&iacute;tica de Privacidad,
+        pod&eacute;s comunicarte con nosotros a trav&eacute;s del correo oficial de World TV:
+        <strong>personadeg321@gmail.com</strong>
+      </p>
+    </section>
+
+    <footer>&copy; 2026 WORLD TV &bull; Todos los derechos reservados</footer>
+  </main>
+
+  <a class="whatsapp" href="https://wa.me/595981197962" target="_blank" rel="noopener noreferrer" aria-label="Contactar por WhatsApp">
+    <img src="https://i.imgur.com/GxDs6Iu.png" alt="WhatsApp">
+  </a>
+
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+  <script>
+    // Fondo GIF fallback
+    (function(){
+      const bg = document.getElementById('bgGif');
+      if(!bg) return;
+      const fallback = "https://images.unsplash.com/photo-1444703686981-a3abbc4d4fe3?auto=format&fit=crop&w=1600&q=60";
+      const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const saveData = navigator.connection && navigator.connection.saveData;
+      if(reduceMotion || saveData){ bg.src = fallback; return; }
+      bg.addEventListener('error', () => { bg.src = fallback; }, { once:true });
+    })();
+
+    // MENU
+    const menuBtn = document.getElementById("menuBtn");
+    const sidebar = document.getElementById("menu");
+    menuBtn.addEventListener("click", () => {
+      const isActive = sidebar.classList.toggle("active");
+      menuBtn.classList.toggle("active");
+      menuBtn.setAttribute("aria-expanded", isActive ? "true" : "false");
+    });
+
+    // GOOGLE LOGIN
+    function parseJwt(token) {
+      try {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(
+          atob(base64).split('').map(c =>
+            '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
+          ).join('')
+        );
+        return JSON.parse(jsonPayload);
+      } catch(e){ return null; }
+    }
+
+    function renderUser() {
+      const user = JSON.parse(localStorage.getItem("user"));
+      const userContent = document.getElementById("userContent");
+      const googleLogin = document.getElementById("googleLogin");
+      if (user) {
+        googleLogin.innerHTML = "";
+        userContent.innerHTML = `
+          <div class="user-info">
+            <img src="${user.picture}" alt="${user.name}">
+            <div>
+              <strong>${user.name}</strong>
+              <span>${user.email || ""}</span>
+            </div>
+          </div>
+          <button class="logout-btn" onclick="logout()">Cerrar sesi&oacute;n</button>
+        `;
+      } else {
+        userContent.innerHTML = "";
+        googleLogin.innerHTML = `
+          <div id="g_id_onload"
+               data-client_id="800480031911-hlt4o267laeuodtj8fi6op1gei9skv9j.apps.googleusercontent.com"
+               data-context="signin"
+               data-ux_mode="popup"
+               data-callback="handleCredentialResponse"
+               data-auto_prompt="false"></div>
+          <div class="g_id_signin"
+               data-type="standard"
+               data-shape="pill"
+               data-theme="filled_black"
+               data-text="continue_with"
+               data-size="medium"
+               data-logo_alignment="left"
+               data-width="210"></div>
+        `;
+      }
+    }
+
+    function handleCredentialResponse(response) {
+      const data = parseJwt(response.credential);
+      if (!data) return;
+      localStorage.setItem("user", JSON.stringify(data));
+      alert("Bienvenido " + (data.name || "usuario"));
+      renderUser();
+    }
+
+    function logout() {
+      localStorage.removeItem("user");
+      renderUser();
+    }
+
+    window.handleCredentialResponse = handleCredentialResponse;
+    window.logout = logout;
+    renderUser();
+  </script>
+</body>
+</html>
