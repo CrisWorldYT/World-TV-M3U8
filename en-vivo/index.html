@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="World TV - Transmisión en vivo 24/7">
+  <meta name="theme-color" content="#0a0e1a">
+  <title>World TV • En Vivo</title>
+  <link rel="icon" href="/logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  <style>
+    :root {
+      --primary:#00d4ff;--success:#10b981;
+      --g3:linear-gradient(135deg,#4facfe 0%,#00f2fe 100%);
+      --g1:linear-gradient(135deg,#667eea 0%,#764ba2 100%);
+      --g2:linear-gradient(135deg,#f093fb 0%,#f5576c 100%);
+      --glass:rgba(255,255,255,0.03);--glass-b:rgba(255,255,255,0.08);
+      --bg:#0a0e1a;--bg2:#111827;--bg3:#1f2937;
+      --txt:#ffffff;--txt2:#9ca3af;--txt3:#6b7280;
+      --radius:16px;--radius-lg:24px;--sidebar:270px;
+      --tr:250ms cubic-bezier(0.4,0,0.2,1);--glow:0 0 30px rgba(0,212,255,0.15);
+    }
+    .light{--glass:rgba(0,0,0,0.04);--glass-b:rgba(0,0,0,0.1);--bg:#f0f4f8;--bg2:#ffffff;--bg3:#e2e8f0;--txt:#0f172a;--txt2:#475569;--txt3:#94a3b8;}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body{font-family:'Inter',sans-serif;color:var(--txt);background:var(--bg);overflow-x:hidden;line-height:1.6;transition:background var(--tr),color var(--tr);}
+    .bg-mesh{position:fixed;inset:0;z-index:-1;background:radial-gradient(circle at 20% 50%,rgba(120,119,198,0.18) 0%,transparent 50%),radial-gradient(circle at 80% 20%,rgba(0,212,255,0.07) 0%,transparent 50%);pointer-events:none;}
+    ::-webkit-scrollbar{width:6px;}::-webkit-scrollbar-track{background:var(--bg2);}::-webkit-scrollbar-thumb{background:var(--primary);border-radius:3px;}
+    h1,h2,h3,h4{font-family:'Outfit',sans-serif;line-height:1.2;}
+    .glass{background:var(--glass);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid var(--glass-b);}
+    .glass-strong{background:rgba(17,24,39,0.88);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid var(--glass-b);}
+    .light .glass-strong{background:rgba(255,255,255,0.92);}
+    .grad-text{background:var(--g3);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+
+    .menu-btn{display:none;position:fixed;top:16px;left:16px;z-index:1600;width:46px;height:46px;border:1px solid var(--glass-b);border-radius:12px;background:rgba(17,24,39,0.92);backdrop-filter:blur(10px);cursor:pointer;align-items:center;justify-content:center;flex-direction:column;gap:5px;}
+    .menu-btn span{width:22px;height:2px;background:var(--txt);border-radius:2px;transition:var(--tr);display:block;}
+    .menu-btn.active span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+    .menu-btn.active span:nth-child(2){opacity:0;}
+    .menu-btn.active span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+
+    .sidebar{position:fixed;top:0;left:0;width:var(--sidebar);height:100vh;padding:20px 16px;overflow-y:auto;z-index:1200;display:flex;flex-direction:column;}
+    .brand-box{text-align:center;padding:16px 0 24px;border-bottom:1px solid var(--glass-b);margin-bottom:20px;}
+    .logo-wrap{width:80px;height:80px;margin:0 auto 12px;border-radius:20px;background:var(--glass);border:1px solid var(--glass-b);display:grid;place-items:center;overflow:hidden;}
+    .logo-wrap img{width:50px;height:50px;object-fit:contain;}
+    .brand-title{font-size:1.6rem;font-weight:800;margin-bottom:2px;}
+    .brand-sub{color:var(--txt2);font-size:0.8rem;}
+    .nav{display:flex;flex-direction:column;gap:4px;flex:1;}
+    .nav-item{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:12px;color:var(--txt2);font-weight:600;font-size:0.9rem;transition:background var(--tr),color var(--tr);text-decoration:none;position:relative;}
+    .nav-item:hover,.nav-item.active{color:var(--txt);background:var(--glass);}
+    .nav-item.active::before{content:'';position:absolute;left:0;top:20%;bottom:20%;width:3px;background:var(--g3);border-radius:0 3px 3px 0;}
+    .nav-icon{width:20px;text-align:center;font-size:1rem;}
+    .sidebar-footer{margin-top:auto;padding:16px;border-radius:var(--radius);background:var(--glass);border:1px solid var(--glass-b);}
+
+    .main{margin-left:var(--sidebar);padding:20px 28px 60px;min-height:100vh;}
+
+    .topbar{position:sticky;top:12px;z-index:100;border-radius:var(--radius-lg);display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 20px;margin-bottom:28px;}
+    .brandmark{display:flex;align-items:center;gap:12px;}
+    .brand-icon{width:44px;height:44px;border-radius:12px;background:var(--g3);display:grid;place-items:center;font-size:1.3rem;color:#0a0e1a;flex-shrink:0;}
+    .brand-text h1{font-size:1.3rem;font-weight:800;}
+    .brand-text span{color:var(--txt2);font-size:0.8rem;}
+    .topbar-actions{display:flex;align-items:center;gap:8px;}
+    .btn-icon{width:40px;height:40px;border-radius:10px;border:1px solid var(--glass-b);background:var(--glass);color:var(--txt);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1rem;transition:background var(--tr),transform var(--tr);text-decoration:none;}
+    .btn-icon:hover{background:rgba(255,255,255,0.08);transform:translateY(-1px);}
+
+    .live-badge-top{display:inline-flex;align-items:center;gap:8px;padding:8px 18px;background:rgba(255,8,68,0.15);border:1px solid rgba(255,8,68,0.3);border-radius:999px;color:#ff4d6d;font-size:0.85rem;font-weight:700;margin-bottom:20px;text-transform:uppercase;letter-spacing:1px;}
+    .live-dot-anim{width:9px;height:9px;border-radius:50%;background:#ff4d6d;animation:ldot 1.5s ease-in-out infinite;}
+    @keyframes ldot{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.4;transform:scale(1.4);}}
+
+    .player-main{border-radius:var(--radius-lg);overflow:hidden;background:var(--bg2);border:1px solid var(--glass-b);margin-bottom:24px;box-shadow:0 20px 60px rgba(0,0,0,0.4);}
+    .video-box{aspect-ratio:16/9;background:#000;position:relative;overflow:hidden;}
+    .video-box iframe{width:100%;height:100%;border:0;display:block;pointer-events:none;}
+    .video-box.active iframe{pointer-events:auto;}
+    .video-overlay{position:absolute;inset:0;z-index:2;cursor:pointer;background:transparent;}
+    .info-bar{padding:20px 28px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+    .info-left h2{font-size:1.4rem;margin-bottom:6px;}
+    .info-left p{color:var(--txt2);display:flex;align-items:center;gap:8px;font-size:0.9rem;}
+    .info-right{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+    .viewers-pill{display:flex;align-items:center;gap:8px;padding:8px 16px;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.2);border-radius:999px;font-size:0.875rem;font-weight:600;color:var(--success);}
+    .viewers-dot{width:8px;height:8px;border-radius:50%;background:var(--success);animation:vdot 2s ease-in-out infinite;}
+    @keyframes vdot{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.5;transform:scale(1.3);}}
+    .quality-badge{padding:6px 12px;background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.2);border-radius:8px;font-size:0.8rem;font-weight:700;color:var(--primary);}
+    .share-btn{display:flex;align-items:center;gap:8px;padding:8px 16px;background:var(--glass);border:1px solid var(--glass-b);border-radius:10px;color:var(--txt2);font-size:0.85rem;font-weight:600;cursor:pointer;transition:background var(--tr),color var(--tr);}
+    .share-btn:hover{background:rgba(255,255,255,0.08);color:var(--txt);}
+
+    .next-chip{display:flex;flex-direction:row;align-items:center;justify-content:space-between;gap:24px;padding:24px 28px;background:linear-gradient(135deg,rgba(124,58,237,0.08) 0%,rgba(0,212,255,0.08) 100%);border:1px solid rgba(124,58,237,0.2);border-radius:var(--radius-lg);margin-bottom:28px;position:relative;overflow:hidden;}
+    .next-chip::before{content:'';position:absolute;top:-60%;left:-10%;width:300px;height:300px;background:var(--g1);opacity:0.05;filter:blur(60px);border-radius:50%;pointer-events:none;}
+    .next-left{display:flex;flex-direction:column;gap:10px;flex:1;min-width:0;position:relative;z-index:1;}
+    .next-label{font-size:0.72rem;text-transform:uppercase;letter-spacing:1.5px;color:#a78bfa;font-weight:700;display:flex;align-items:center;gap:6px;}
+    .next-title{font-size:1.25rem;font-weight:800;color:var(--txt);font-family:'Outfit',sans-serif;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;}
+    .next-hour{color:var(--txt2);font-size:0.875rem;display:flex;align-items:center;gap:6px;}
+    .next-hour i{color:#a78bfa;}
+    .cd-row{display:flex;align-items:center;gap:8px;}
+    .cd-item{text-align:center;min-width:56px;padding:10px 6px;background:rgba(0,0,0,0.2);border:1px solid var(--glass-b);border-radius:12px;}
+    .light .cd-item{background:rgba(0,0,0,0.06);}
+    .cd-val{font-size:1.4rem;font-weight:800;color:var(--primary);display:block;line-height:1;font-family:'Outfit',sans-serif;}
+    .cd-lbl{font-size:0.6rem;color:var(--txt3);text-transform:uppercase;letter-spacing:0.5px;margin-top:3px;}
+    .cd-sep{font-size:1.2rem;font-weight:800;color:var(--txt3);margin-bottom:12px;flex-shrink:0;}
+    .next-right{flex-shrink:0;position:relative;z-index:1;}
+    .next-img-wrap{width:180px;height:116px;border-radius:12px;overflow:hidden;border:2px solid rgba(124,58,237,0.3);background:var(--bg3);}
+    .next-img-wrap img{width:100%;height:100%;object-fit:cover;display:block;transition:transform 0.4s ease;}
+    .next-img-wrap:hover img{transform:scale(1.04);}
+    .next-img-ph{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:var(--txt3);font-size:1.6rem;}
+    .next-img-ph span:last-child{font-size:0.7rem;}
+
+    .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px;}
+    .stat-card{background:var(--glass);border:1px solid var(--glass-b);border-radius:var(--radius-lg);padding:18px 20px;display:flex;align-items:center;gap:14px;transition:transform var(--tr),box-shadow var(--tr);}
+    .stat-card:hover{transform:translateY(-2px);box-shadow:var(--glow);}
+    .stat-icon{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:1.2rem;flex-shrink:0;}
+    .si-cyan{background:rgba(0,212,255,0.12);color:var(--primary);}
+    .si-green{background:rgba(16,185,129,0.12);color:var(--success);}
+    .si-purple{background:rgba(124,58,237,0.12);color:#a78bfa;}
+    .si-pink{background:rgba(244,114,182,0.12);color:#f472b6;}
+    .stat-info{min-width:0;}
+    .stat-num{font-size:1.3rem;font-weight:800;font-family:'Outfit',sans-serif;}
+    .stat-desc{font-size:0.75rem;color:var(--txt3);margin-top:2px;}
+
+    .sec-title{font-size:1.2rem;font-weight:700;display:flex;align-items:center;gap:10px;color:var(--txt);margin-bottom:18px;}
+    .sec-title i{color:var(--primary);}
+
+    .feat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:32px;}
+    .feat-card{background:var(--glass);border:1px solid var(--glass-b);border-radius:var(--radius-lg);padding:22px;display:flex;align-items:flex-start;gap:14px;transition:transform var(--tr),box-shadow var(--tr);}
+    .feat-card:hover{transform:translateY(-3px);box-shadow:var(--glow);}
+    .feat-icon{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:1.2rem;flex-shrink:0;}
+    .fi-c{background:rgba(0,212,255,0.1);color:var(--primary);}
+    .fi-p{background:rgba(124,58,237,0.1);color:#a78bfa;}
+    .fi-g{background:rgba(16,185,129,0.1);color:var(--success);}
+    .feat-info h3{font-size:0.95rem;font-weight:700;margin-bottom:4px;}
+    .feat-info p{font-size:0.82rem;color:var(--txt2);line-height:1.5;}
+
+    .toast-wrap{position:fixed;top:20px;right:20px;z-index:2000;display:flex;flex-direction:column;gap:10px;pointer-events:none;}
+    .toast{padding:14px 20px;background:rgba(15,20,35,0.97);border:1px solid var(--glass-b);border-radius:var(--radius);display:flex;align-items:center;gap:10px;animation:slideR 0.3s ease-out;font-size:0.9rem;max-width:340px;pointer-events:all;}
+    .light .toast{background:rgba(255,255,255,0.97);color:#0f172a;}
+    @keyframes slideR{from{transform:translateX(120%);opacity:0;}to{transform:translateX(0);opacity:1;}}
+    .toast.success{border-left:3px solid var(--success);}
+    .toast.error{border-left:3px solid #ef4444;}
+    .toast.info{border-left:3px solid var(--primary);}
+    .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:1100;backdrop-filter:blur(4px);}
+    .overlay.show{display:block;}
+
+    .whatsapp{position:fixed;right:24px;bottom:24px;z-index:1300;width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,#25d366,#128c7e);display:flex;align-items:center;justify-content:center;font-size:1.6rem;color:white;box-shadow:0 8px 24px rgba(37,211,102,0.35);transition:transform var(--tr),box-shadow var(--tr);text-decoration:none;}
+    .whatsapp:hover{transform:scale(1.1);box-shadow:0 12px 32px rgba(37,211,102,0.5);}
+
+    footer{margin-left:var(--sidebar);padding:28px 32px;border-top:1px solid var(--glass-b);display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;background:var(--glass);}
+    .footer-brand{display:flex;align-items:center;gap:10px;}
+    .footer-brand img{width:28px;height:28px;object-fit:contain;}
+    .footer-brand span{font-weight:700;font-size:0.95rem;}
+    .footer-links{display:flex;align-items:center;gap:20px;flex-wrap:wrap;}
+    .footer-links a{color:var(--txt3);font-size:0.82rem;text-decoration:none;transition:color var(--tr);}
+    .footer-links a:hover{color:var(--primary);}
+    .footer-copy{color:var(--txt3);font-size:0.82rem;}
+
+    .light .nav-item{color:var(--txt2);}
+    .light .nav-item:hover,.light .nav-item.active{color:var(--txt);background:rgba(0,0,0,0.05);}
+    .light .stat-card{background:rgba(255,255,255,0.7);}
+    .light .feat-card{background:rgba(255,255,255,0.7);}
+
+    @media(max-width:960px){
+      .menu-btn{display:flex;}
+      .sidebar{transform:translateX(-100%);transition:transform var(--tr);}
+      .sidebar.open{transform:translateX(0);box-shadow:4px 0 40px rgba(0,0,0,0.5);}
+      .main{margin-left:0;padding:80px 16px 60px;}
+      .topbar{position:relative;top:0;}
+      footer{margin-left:0;flex-direction:column;text-align:center;}
+      .footer-links{justify-content:center;}
+      .stats-row{grid-template-columns:repeat(2,1fr);}
+      .feat-row{grid-template-columns:1fr;}
+    }
+    @media(max-width:700px){
+      .next-chip{padding:18px;gap:14px;}
+      .next-title{font-size:1rem;}
+      .next-img-wrap{width:110px;height:80px;border-radius:10px;}
+      .cd-item{min-width:42px;padding:8px 4px;}
+      .cd-val{font-size:1.1rem;}
+    }
+    @media(max-width:480px){
+      .stats-row{grid-template-columns:repeat(2,1fr);gap:10px;}
+      .info-bar{padding:16px;}
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-mesh"></div>
+  <div class="toast-wrap" id="toastWrap"></div>
+  <div class="overlay" id="overlay"></div>
+  <button class="menu-btn" id="menuBtn" aria-label="Menú"><span></span><span></span><span></span></button>
+
+  <nav class="sidebar glass-strong" id="sidebar">
+    <div class="brand-box">
+      <div class="logo-wrap"><img src="/logo.png" alt="World TV" onerror="this.style.display='none'"></div>
+      <div class="brand-title grad-text">WORLD TV</div>
+      <div class="brand-sub">Streaming Premium</div>
+    </div>
+    <div class="nav">
+      <a href="/" class="nav-item"><span class="nav-icon"><i class="fas fa-home"></i></span>Inicio</a>
+      <a href="#" class="nav-item active"><span class="nav-icon"><i class="fas fa-broadcast-tower"></i></span>En Vivo</a>
+      <a href="/radio" class="nav-item"><span class="nav-icon"><i class="fas fa-radio"></i></span>Radio</a>
+      <a href="/noticias" class="nav-item"><span class="nav-icon"><i class="fas fa-newspaper"></i></span>Noticias</a>
+      <a href="/politica-de-privacidad" class="nav-item"><span class="nav-icon"><i class="fas fa-shield-alt"></i></span>Privacidad</a>
+      <a href="/info" class="nav-item"><span class="nav-icon"><i class="fas fa-info-circle"></i></span>Info</a>
+    </div>
+    <div class="sidebar-footer">
+      <a href="/" style="display:flex;align-items:center;gap:10px;padding:10px;border-radius:10px;background:var(--glass);border:1px solid var(--glass-b);color:var(--txt);text-decoration:none;font-size:0.85rem;font-weight:600;">
+        <i class="fas fa-arrow-left" style="color:var(--primary)"></i>Volver al inicio
+      </a>
+    </div>
+  </nav>
+
+  <main class="main">
+    <header class="topbar glass">
+      <div class="brandmark">
+        <div class="brand-icon"><i class="fas fa-broadcast-tower"></i></div>
+        <div class="brand-text"><h1>En Vivo</h1><span id="currentDate"></span></div>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn-icon" id="themeBtn" aria-label="Tema"><i class="fas fa-moon"></i></button>
+      </div>
+    </header>
+
+    <div style="margin-bottom:20px">
+      <div class="live-badge-top">
+        <div class="live-dot-anim"></div>
+        Transmitiendo en vivo ahora
+      </div>
+    </div>
+
+    <section class="player-main">
+      <div class="video-box" id="videoBox">
+        <div class="video-overlay" id="videoOverlay"></div>
+        <iframe id="liveFrame" src="https://worldtv2026-embed.netlify.app" title="World TV Live" allow="autoplay; fullscreen" loading="eager" scrolling="no"></iframe>
+      </div>
+      <div class="info-bar glass">
+        <div class="info-left">
+          <h2 id="progTitulo">Cargando programa...</h2>
+          <p id="progHorario"><i class="far fa-clock"></i><span></span></p>
+        </div>
+        <div class="info-right">
+          <div class="viewers-pill"><div class="viewers-dot"></div><span id="viewerPill">— viendo</span></div>
+          <div class="quality-badge">HD</div>
+          <button class="share-btn" onclick="compartir()"><i class="fas fa-share-alt"></i>Compartir</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="next-chip" id="nextChip" style="display:none">
+      <div class="next-left">
+        <div class="next-label"><i class="fas fa-calendar-alt"></i>Próximo programa</div>
+        <div class="next-title" id="nextTitle">—</div>
+        <div class="next-hour"><i class="far fa-clock"></i><span id="nextHourText"></span></div>
+        <div class="cd-row">
+          <div class="cd-item"><span class="cd-val" id="cdH">00</span><div class="cd-lbl">h</div></div>
+          <span class="cd-sep">:</span>
+          <div class="cd-item"><span class="cd-val" id="cdM">00</span><div class="cd-lbl">min</div></div>
+          <span class="cd-sep">:</span>
+          <div class="cd-item"><span class="cd-val" id="cdS">00</span><div class="cd-lbl">seg</div></div>
+        </div>
+      </div>
+      <div class="next-right">
+        <div class="next-img-wrap" id="nextImgWrap">
+          <div class="next-img-ph"><span>📺</span><span>Sin imagen</span></div>
+        </div>
+      </div>
+    </section>
+
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-icon si-cyan"><i class="fas fa-eye"></i></div><div class="stat-info"><div class="stat-num" id="viewerCount">—</div><div class="stat-desc">Viendo ahora</div></div></div>
+      <div class="stat-card"><div class="stat-icon si-green"><i class="fas fa-signal"></i></div><div class="stat-info"><div class="stat-num">24/7</div><div class="stat-desc">Transmisión</div></div></div>
+      <div class="stat-card"><div class="stat-icon si-purple"><i class="fas fa-tv"></i></div><div class="stat-info"><div class="stat-num">HD</div><div class="stat-desc">Calidad</div></div></div>
+      <div class="stat-card"><div class="stat-icon si-pink"><i class="fas fa-globe"></i></div><div class="stat-info"><div class="stat-num">Mundial</div><div class="stat-desc">Cobertura</div></div></div>
+    </div>
+
+    <h2 class="sec-title"><i class="fas fa-star"></i>Por qué ver World TV</h2>
+    <div class="feat-row">
+      <div class="feat-card"><div class="feat-icon fi-c"><i class="fas fa-broadcast-tower"></i></div><div class="feat-info"><h3>Señal HD Continua</h3><p>Transmisión de alta calidad sin interrupciones las 24 horas del día.</p></div></div>
+      <div class="feat-card"><div class="feat-icon fi-p"><i class="fas fa-globe"></i></div><div class="feat-info"><h3>Disponible en todo el mundo</h3><p>Míranos desde cualquier dispositivo y desde cualquier lugar del planeta.</p></div></div>
+      <div class="feat-card"><div class="feat-icon fi-g"><i class="fas fa-bolt"></i></div><div class="feat-info"><h3>Baja Latencia</h3><p>Stream optimizado para que no te pierdas ni un segundo de la acción.</p></div></div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-brand"><img src="/logo.png" alt="World TV" onerror="this.style.display='none'"><span class="grad-text">WORLD TV</span></div>
+    <div class="footer-links">
+      <a href="/">Inicio</a>
+      <a href="/radio">Radio</a>
+      <a href="/noticias">Noticias</a>
+      <a href="/politica-de-privacidad">Privacidad</a>
+      <a href="/info">Info</a>
+    </div>
+    <div class="footer-copy">© 2026 World TV. Todos los derechos reservados.</div>
+  </footer>
+
+  <a class="whatsapp" href="https://wa.me/595981197962" target="_blank" rel="noopener" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+
+  <script>
+  const FB_CFG={apiKey:"AIzaSyCxAp5gwA4sJ2UUnRUTLRNBsZIl-di0aN4",authDomain:"worldtv-d9f22.firebaseapp.com",projectId:"worldtv-d9f22",storageBucket:"worldtv-d9f22.appspot.com",messagingSenderId:"1056595783914",appId:"1:1056595783914:web:b2ba6bb924772df1152793"};
+  const $=id=>document.getElementById(id);
+
+  function toast(msg,type='info'){
+    const t=document.createElement('div');t.className=`toast ${type}`;
+    const ic={success:'check-circle',error:'exclamation-circle',info:'info-circle'};
+    const cl={success:'#10b981',error:'#ef4444',info:'#00d4ff'};
+    t.innerHTML=`<i class="fas fa-${ic[type]}" style="color:${cl[type]}"></i><span>${msg}</span>`;
+    $('toastWrap').appendChild(t);
+    setTimeout(()=>{t.style.cssText+='opacity:0;transform:translateX(120%);transition:all 0.3s';setTimeout(()=>t.remove(),320);},3200);
+  }
+
+  function pad(n){return String(Math.floor(n)).padStart(2,'0');}
+
+  function setDate(){$('currentDate').textContent=new Date().toLocaleDateString('es-ES',{weekday:'long',year:'numeric',month:'long',day:'numeric'});}
+
+  function compartir(){
+    if(navigator.share){navigator.share({title:'World TV En Vivo',url:window.location.href});}
+    else{navigator.clipboard.writeText(window.location.href);toast('Enlace copiado','success');}
+  }
+
+  function initTheme(){
+    if(localStorage.getItem('theme')==='light')document.body.classList.add('light');
+    updateThemeIcon();
+    $('themeBtn').addEventListener('click',()=>{
+      document.body.classList.toggle('light');
+      localStorage.setItem('theme',document.body.classList.contains('light')?'light':'dark');
+      updateThemeIcon();
+    });
+  }
+
+  function updateThemeIcon(){$('themeBtn').querySelector('i').className=document.body.classList.contains('light')?'fas fa-sun':'fas fa-moon';}
+
+  function initMenu(){
+    const btn=$('menuBtn'),sb=$('sidebar'),ov=$('overlay');
+    const open=()=>{sb.classList.add('open');btn.classList.add('active');ov.classList.add('show');};
+    const close=()=>{sb.classList.remove('open');btn.classList.remove('active');ov.classList.remove('show');};
+    btn.addEventListener('click',()=>sb.classList.contains('open')?close():open());
+    ov.addEventListener('click',close);
+  }
+
+  function initVideoOverlay(){
+    const box=$('videoBox'),ov=$('videoOverlay');
+    ov.addEventListener('click',()=>{box.classList.add('active');ov.style.display='none';});
+    box.addEventListener('mouseleave',()=>{box.classList.remove('active');ov.style.display='block';});
+    box.addEventListener('touchend',()=>{if(!box.classList.contains('active')){box.classList.add('active');ov.style.display='none';}},{passive:true});
+  }
+
+  let db,cdTimer=null;
+
+  function initFirebase(){
+    if(typeof firebase==='undefined')return;
+    try{firebase.initializeApp(FB_CFG);db=firebase.firestore();watchProgram();watchNext();initViewers();}
+    catch(e){console.warn(e);}
+  }
+
+  function watchProgram(){
+    db.collection('programacion').doc('actual').onSnapshot(doc=>{
+      if(!doc.exists)return;const d=doc.data();
+      $('progTitulo').textContent=d.titulo||'En vivo';
+      $('progHorario').querySelector('span').textContent=d.horario||'';
+      if(d.streamURL)$('liveFrame').src=d.streamURL;
+    });
+  }
+
+  function watchNext(){
+    db.collection('programacion').doc('proximo').onSnapshot(doc=>{
+      const chip=$('nextChip');
+      if(!doc.exists){chip.style.display='none';return;}
+      const d=doc.data();
+      $('nextTitle').textContent=d.titulo||'Próximamente';
+      $('nextHourText').textContent=d.horario||'';
+      chip.style.display='flex';
+      const wrap=$('nextImgWrap');
+      if(d.imagen){wrap.innerHTML=`<img src="${d.imagen}" alt="${d.titulo||''}" loading="lazy" onerror="this.parentElement.innerHTML='<div class=next-img-ph><span>📺</span><span>Sin imagen</span></div>'">`;}
+      else{wrap.innerHTML=`<div class="next-img-ph"><span>📺</span><span>Sin imagen</span></div>`;}
+      if(d.inicio)startCountdown(d.inicio);
+    });
+  }
+
+  function startCountdown(st){
+    if(cdTimer)clearInterval(cdTimer);
+    const tick=()=>{
+      const diff=new Date(st)-new Date();
+      if(diff<=0){clearInterval(cdTimer);$('cdH').textContent=$('cdM').textContent=$('cdS').textContent='00';return;}
+      $('cdH').textContent=pad(diff/3600000);$('cdM').textContent=pad((diff%3600000)/60000);$('cdS').textContent=pad((diff%60000)/1000);
+    };
+    tick();cdTimer=setInterval(tick,1000);
+  }
+
+  const SESSION_KEY='wtv_live_sid';
+  let _ref=null,_hb=null;
+
+  async function initViewers(){
+    let sid=sessionStorage.getItem(SESSION_KEY);
+    if(!sid){sid=`lv_${Date.now()}_${Math.random().toString(36).slice(2,7)}`;sessionStorage.setItem(SESSION_KEY,sid);}
+    _ref=db.collection('viewers_live').doc(sid);
+    async function hb(){try{await _ref.set({ts:firebase.firestore.FieldValue.serverTimestamp(),active:true});}catch(e){}}
+    await hb();_hb=setInterval(hb,45000);
+    function bye(){try{_ref.delete();}catch(_){}clearInterval(_hb);}
+    window.addEventListener('pagehide',bye);window.addEventListener('beforeunload',bye);
+    db.collection('viewers_live').onSnapshot(snap=>{
+      const cutoff=Date.now()-90000;let count=0;
+      snap.forEach(doc=>{const ts=doc.data().ts;if(!ts)return;const ms=ts.toMillis?ts.toMillis():(ts.seconds||0)*1000;if(ms>=cutoff)count++;});
+      count=Math.max(count,1);
+      const label=count>=1000?(count/1000).toFixed(1)+'K':String(count);
+      $('viewerCount').textContent=label;$('viewerPill').textContent=`${label} viendo`;
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded',()=>{setDate();initTheme();initMenu();initVideoOverlay();initFirebase();});
+  </script>
+</body>
+</html>
