@@ -1,0 +1,2885 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" sizes="any" href="/favicon.ico">
+</head>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>World TV • Control Center</title>
+
+  <meta name="theme-color" content="#070b16">
+  <meta name="color-scheme" content="dark">
+
+  <link rel="icon" href="/logo.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+
+    :root{
+
+      --c1:#00e5ff;
+      --c2:#7d4dff;
+      --c3:#ff4aa2;
+      --c4:#00ff95;
+
+      --bg:#050812;
+      --bg2:#091120;
+      --bg3:#0d172d;
+
+      --panel:#0a1020;
+
+      --text:#ffffff;
+      --muted:#aeb8d3;
+
+      --line:rgba(255,255,255,.08);
+
+      --success:#00ff95;
+      --danger:#ff5c7a;
+      --warning:#ffd166;
+
+      --radius:24px;
+      --sidebar-w:290px;
+
+      --shadow:
+        0 20px 50px rgba(0,0,0,.30);
+
+      --shadow-soft:
+        0 8px 24px rgba(0,0,0,.18);
+
+      --transition:
+        .35s cubic-bezier(.22,.61,.36,1);
+
+    }
+
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+    }
+
+    html{
+      scroll-behavior:smooth;
+    }
+
+    body{
+      font-family:'Poppins',sans-serif;
+      min-height:100vh;
+      color:var(--text);
+      overflow-x:hidden;
+      background:
+        radial-gradient(circle at top left,
+          rgba(0,229,255,.12),
+          transparent 25%),
+
+        radial-gradient(circle at top right,
+          rgba(125,77,255,.15),
+          transparent 30%),
+
+        linear-gradient(
+          180deg,
+          #050812,
+          #091120,
+          #04060d
+        );
+
+      position:relative;
+    }
+
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      z-index:-2;
+
+      background:
+        linear-gradient(
+          rgba(255,255,255,.015) 1px,
+          transparent 1px
+        ),
+
+        linear-gradient(
+          90deg,
+          rgba(255,255,255,.015) 1px,
+          transparent 1px
+        );
+
+      background-size:42px 42px;
+
+      opacity:.5;
+
+      pointer-events:none;
+    }
+
+    body::after{
+      content:"";
+      position:fixed;
+      inset:-20%;
+      z-index:-3;
+
+      background:
+        radial-gradient(
+          circle,
+          rgba(0,229,255,.08),
+          transparent 35%
+        ),
+
+        radial-gradient(
+          circle,
+          rgba(125,77,255,.08),
+          transparent 35%
+        );
+
+      filter:blur(80px);
+
+      animation:bgFloat 18s linear infinite alternate;
+
+      pointer-events:none;
+    }
+
+    @keyframes bgFloat{
+
+      from{
+        transform:
+          translate(-3%, -3%)
+          scale(1);
+      }
+
+      to{
+        transform:
+          translate(3%, 3%)
+          scale(1.08);
+      }
+
+    }
+
+    a{
+      color:inherit;
+      text-decoration:none;
+    }
+
+    img{
+      display:block;
+      max-width:100%;
+    }
+
+    button,
+    input,
+    textarea,
+    select{
+      font:inherit;
+    }
+
+    ::-webkit-scrollbar{
+      width:10px;
+    }
+
+    ::-webkit-scrollbar-thumb{
+      background:
+        linear-gradient(
+          var(--c1),
+          var(--c2)
+        );
+
+      border-radius:999px;
+    }
+
+    ::-webkit-scrollbar-track{
+      background:#070b16;
+    }
+
+    .hidden{
+      display:none !important;
+    }
+
+    /* ===== GLASS SYSTEM ===== */
+
+    .glass{
+
+      background:
+        linear-gradient(
+          180deg,
+          rgba(255,255,255,.06),
+          rgba(255,255,255,.03)
+        );
+
+      border:
+        1px solid rgba(255,255,255,.08);
+
+      border-radius:
+        var(--radius);
+
+      box-shadow:
+        var(--shadow);
+
+      transition:
+        transform var(--transition),
+        box-shadow var(--transition);
+
+    }
+
+    .glass:hover{
+      transform:translateY(-2px);
+    }
+
+    @supports (backdrop-filter: blur(14px)){
+
+      .glass{
+        backdrop-filter:blur(14px);
+      }
+
+    }
+
+    .glow-border{
+      position:relative;
+      isolation:isolate;
+    }
+
+    .glow-border::before{
+
+      content:"";
+
+      position:absolute;
+
+      inset:-1px;
+
+      border-radius:
+        calc(var(--radius) + 2px);
+
+      background:
+        linear-gradient(
+          120deg,
+          var(--c1),
+          var(--c2),
+          var(--c3),
+          var(--c1)
+        );
+
+      background-size:
+        300% 300%;
+
+      animation:
+        borderFlow 12s ease infinite;
+
+      filter:
+        blur(18px);
+
+      opacity:.28;
+
+      z-index:-1;
+    }
+
+    @keyframes borderFlow{
+
+      0%{
+        background-position:0% 50%;
+      }
+
+      50%{
+        background-position:100% 50%;
+      }
+
+      100%{
+        background-position:0% 50%;
+      }
+
+    }
+
+    /* ===== LOGIN ===== */
+
+    .login-screen{
+      min-height:100vh;
+      display:grid;
+      place-items:center;
+      padding:24px;
+    }
+
+    .login-panel{
+      width:100%;
+      max-width:480px;
+      padding:34px;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .login-panel::before{
+      content:"";
+      position:absolute;
+      width:240px;
+      height:240px;
+      right:-80px;
+      top:-80px;
+
+      border-radius:50%;
+
+      background:
+        radial-gradient(
+          circle,
+          rgba(0,229,255,.18),
+          transparent 70%
+        );
+
+      pointer-events:none;
+    }
+
+    .login-logo{
+      width:92px;
+      height:92px;
+
+      margin:0 auto 18px;
+
+      border-radius:28px;
+
+      display:grid;
+      place-items:center;
+
+      background:
+        linear-gradient(
+          135deg,
+          rgba(0,229,255,.15),
+          rgba(125,77,255,.15)
+        );
+
+      border:
+        1px solid rgba(255,255,255,.08);
+
+      box-shadow:
+        0 0 30px rgba(0,229,255,.15);
+
+      animation:
+        floatLogo 5s ease-in-out infinite;
+    }
+
+    @keyframes floatLogo{
+
+      0%,100%{
+        transform:translateY(0);
+      }
+
+      50%{
+        transform:translateY(-8px);
+      }
+
+    }
+
+    .login-logo img{
+      width:52px;
+      height:52px;
+    }
+
+    .login-panel h2{
+      text-align:center;
+
+      font-family:'Orbitron',sans-serif;
+
+      font-size:2rem;
+
+      margin-bottom:10px;
+
+      background:
+        linear-gradient(
+          90deg,
+          var(--c1),
+          var(--c2),
+          var(--c3)
+        );
+
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+    }
+
+    .login-panel p{
+      text-align:center;
+      color:var(--muted);
+      margin-bottom:24px;
+    }
+
+    /* ===== FORM ===== */
+
+    .field{
+      margin-bottom:14px;
+    }
+
+    .field label{
+      display:block;
+      margin-bottom:8px;
+
+      color:#e4ebff;
+
+      font-weight:600;
+
+      font-size:.92rem;
+    }
+
+    .input{
+
+      width:100%;
+
+      padding:15px 16px;
+
+      border-radius:16px;
+
+      border:
+        1px solid rgba(255,255,255,.08);
+
+      background:
+        rgba(255,255,255,.04);
+
+      color:#fff;
+
+      outline:none;
+
+      transition:
+        all var(--transition);
+
+    }
+
+    .input:focus{
+
+      border-color:
+        rgba(0,229,255,.35);
+
+      box-shadow:
+        0 0 0 4px rgba(0,229,255,.08);
+
+      transform:
+        translateY(-1px);
+
+    }
+
+    textarea.input{
+      resize:vertical;
+      min-height:130px;
+    }
+
+    select.input option{
+      background:#091120;
+      color:#fff;
+    }
+
+    /* ===== BUTTONS ===== */
+
+    .btn{
+
+      border:none;
+
+      cursor:pointer;
+
+      padding:14px 18px;
+
+      border-radius:16px;
+
+      font-weight:700;
+
+      transition:
+        all var(--transition);
+
+      position:relative;
+
+      overflow:hidden;
+    }
+
+    .btn:hover{
+      transform:translateY(-2px);
+    }
+
+    .btn-primary{
+
+      background:
+        linear-gradient(
+          90deg,
+          var(--c1),
+          var(--c2)
+        );
+
+      color:#071018;
+
+      box-shadow:
+        0 10px 25px rgba(0,229,255,.18);
+
+    }
+
+    .btn-secondary{
+
+      background:
+        rgba(255,255,255,.05);
+
+      border:
+        1px solid rgba(255,255,255,.08);
+
+      color:#fff;
+
+    }
+
+    .error-text{
+      margin-top:12px;
+      text-align:center;
+      color:var(--danger);
+      min-height:20px;
+    }
+
+    .save-msg{
+      margin-top:12px;
+
+      padding:10px 14px;
+
+      border-radius:14px;
+
+      color:var(--success);
+
+      background:
+        rgba(0,255,149,.08);
+
+      border:
+        1px solid rgba(0,255,149,.12);
+
+      min-height:22px;
+    }
+
+    /* ===== DASHBOARD ===== */
+
+    .dashboard{
+      display:grid;
+      grid-template-columns:
+        var(--sidebar-w) 1fr;
+
+      min-height:100vh;
+    }
+
+    /* ===== SIDEBAR ===== */
+
+    .sidebar{
+
+      position:sticky;
+
+      top:0;
+
+      height:100vh;
+
+      padding:20px;
+
+      overflow-y:auto;
+
+      background:
+        linear-gradient(
+          180deg,
+          rgba(6,10,20,.96),
+          rgba(9,14,28,.94)
+        );
+
+      border-right:
+        1px solid rgba(255,255,255,.08);
+
+    }
+
+    .brand-box{
+      text-align:center;
+      margin-bottom:18px;
+    }
+
+    .brand-badge{
+
+      width:88px;
+      height:88px;
+
+      margin:0 auto 14px;
+
+      border-radius:26px;
+
+      display:grid;
+      place-items:center;
+
+      background:
+        linear-gradient(
+          135deg,
+          rgba(0,229,255,.15),
+          rgba(125,77,255,.15)
+        );
+
+      border:
+        1px solid rgba(255,255,255,.08);
+    }
+
+    .brand-badge img{
+      width:50px;
+      height:50px;
+    }
+
+    .brand-title{
+      font-family:'Orbitron',sans-serif;
+      font-size:1.4rem;
+      font-weight:800;
+
+      background:
+        linear-gradient(
+          90deg,
+          var(--c1),
+          var(--c2),
+          var(--c3)
+        );
+
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+    }
+
+    .brand-sub{
+      margin-top:4px;
+      color:var(--muted);
+      font-size:.88rem;
+    }
+
+    .status-chip{
+
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+
+      padding:10px;
+
+      margin-bottom:18px;
+
+      border-radius:999px;
+
+      background:
+        rgba(255,255,255,.04);
+
+      border:
+        1px solid rgba(255,255,255,.08);
+    }
+
+    .status-dot{
+
+      width:10px;
+      height:10px;
+
+      border-radius:50%;
+
+      background:var(--c4);
+
+      animation:
+        pulseGreen 2s infinite;
+    }
+
+    @keyframes pulseGreen{
+
+      0%{
+        box-shadow:0 0 0 0 rgba(0,255,149,.6);
+      }
+
+      70%{
+        box-shadow:0 0 0 12px rgba(0,255,149,0);
+      }
+
+      100%{
+        box-shadow:0 0 0 0 rgba(0,255,149,0);
+      }
+
+    }
+
+    .nav{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+
+    .nav a{
+
+      padding:14px 16px;
+
+      border-radius:16px;
+
+      background:
+        rgba(255,255,255,.03);
+
+      transition:
+        all var(--transition);
+
+      font-weight:600;
+    }
+
+    .nav a:hover{
+
+      background:
+        rgba(255,255,255,.06);
+
+      color:var(--c1);
+
+      transform:
+        translateX(6px);
+
+    }
+
+    .logout-btn{
+
+      width:100%;
+
+      margin-top:20px;
+
+      padding:13px;
+
+      border:none;
+
+      border-radius:16px;
+
+      color:#fff;
+
+      cursor:pointer;
+
+      background:
+        linear-gradient(
+          90deg,
+          rgba(255,0,128,.15),
+          rgba(125,77,255,.15)
+        );
+
+    }
+
+    /* ===== CONTENT ===== */
+
+    .content{
+      padding:24px;
+    }
+
+    .topbar{
+
+      display:flex;
+
+      justify-content:space-between;
+
+      align-items:center;
+
+      gap:16px;
+
+      margin-bottom:24px;
+
+      flex-wrap:wrap;
+
+    }
+
+    .page-title{
+
+      font-family:'Orbitron',sans-serif;
+
+      font-size:2rem;
+
+      background:
+        linear-gradient(
+          90deg,
+          #fff,
+          var(--c1),
+          var(--c2)
+        );
+
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+    }
+    
+        /* ===== TOP RIGHT CHIPS ===== */
+
+    .top-right{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .mini-chip{
+
+      padding:10px 14px;
+
+      border-radius:999px;
+
+      background:
+        rgba(255,255,255,.04);
+
+      border:
+        1px solid rgba(255,255,255,.08);
+
+      font-size:.88rem;
+    }
+
+    /* ===== STATS ===== */
+
+    .stats{
+
+      display:grid;
+
+      grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+      gap:18px;
+
+      margin-bottom:24px;
+    }
+
+    .stat-card{
+
+      padding:22px;
+
+      position:relative;
+
+      overflow:hidden;
+    }
+
+    .stat-card::after{
+
+      content:"";
+
+      position:absolute;
+
+      width:160px;
+      height:160px;
+
+      right:-60px;
+      top:-60px;
+
+      border-radius:50%;
+
+      background:
+        radial-gradient(
+          circle,
+          rgba(0,229,255,.14),
+          transparent 70%
+        );
+    }
+
+    .stat-label{
+      color:var(--muted);
+      font-size:.9rem;
+      margin-bottom:8px;
+    }
+
+    .stat-value{
+
+      font-family:'Orbitron',sans-serif;
+
+      font-size:1.5rem;
+
+      color:#fff;
+    }
+
+    /* ===== MAIN GRID ===== */
+
+    .main-grid{
+
+      display:grid;
+
+      grid-template-columns:1.1fr .9fr;
+
+      gap:20px;
+
+      align-items:start;
+    }
+
+    .stack{
+      display:grid;
+      gap:20px;
+    }
+
+    /* ===== CARDS ===== */
+
+    .card{
+      padding:22px;
+
+      position:relative;
+      overflow:hidden;
+
+      content-visibility:auto;
+      contain-intrinsic-size:420px;
+    }
+
+    .card-title{
+
+      display:flex;
+
+      justify-content:space-between;
+
+      align-items:center;
+
+      margin-bottom:16px;
+    }
+
+    .card h3{
+
+      font-size:1.2rem;
+
+      background:
+        linear-gradient(
+          90deg,
+          var(--c1),
+          var(--c2)
+        );
+
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+    }
+
+    .card-sub{
+      color:var(--muted);
+      margin-bottom:14px;
+    }
+
+    .form-grid{
+      display:grid;
+      gap:14px;
+    }
+
+    .actions{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+
+    .actions .btn{
+      width:auto;
+      min-width:160px;
+    }
+
+    .helper-line{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:14px;
+    }
+
+    .helper-chip{
+
+      padding:7px 12px;
+
+      border-radius:999px;
+
+      background:
+        rgba(255,255,255,.04);
+
+      border:
+        1px solid rgba(255,255,255,.08);
+
+      font-size:.8rem;
+    }
+
+    /* ===== PREVIEW ===== */
+
+    .preview-shell{
+
+      width:100%;
+
+      aspect-ratio:16/9;
+
+      overflow:hidden;
+
+      border-radius:18px;
+
+      background:#000;
+
+      border:
+        1px solid rgba(255,255,255,.08);
+    }
+
+    .preview-shell iframe{
+      width:100%;
+      height:100%;
+      border:0;
+    }
+
+    .public-info{
+
+      margin-top:16px;
+
+      padding:16px;
+
+      border-radius:16px;
+
+      background:
+        rgba(255,255,255,.03);
+
+      border:
+        1px solid rgba(255,255,255,.06);
+    }
+
+    .public-info h4{
+      color:#fff;
+      margin-bottom:6px;
+    }
+
+    .public-info p{
+      color:var(--muted);
+      word-break:break-word;
+    }
+
+    /* ===== NEWS LIST ===== */
+
+    .news-list{
+
+      display:grid;
+      gap:12px;
+
+      max-height:540px;
+      overflow:auto;
+      padding-right:4px;
+
+      content-visibility:auto;
+      contain-intrinsic-size:600px;
+    }
+
+    .news-item{
+
+      padding:16px;
+
+      border-radius:18px;
+
+      background:
+        rgba(255,255,255,.04);
+
+      border:
+        1px solid rgba(255,255,255,.08);
+
+      transition:all var(--transition);
+    }
+
+    .news-item:hover{
+
+      transform:translateY(-2px);
+
+      border-color:rgba(0,229,255,.18);
+    }
+
+    .news-item-top{
+
+      display:flex;
+
+      justify-content:space-between;
+
+      gap:12px;
+
+      margin-bottom:8px;
+    }
+
+    .news-badge{
+
+      padding:6px 10px;
+
+      border-radius:999px;
+
+      background:
+        linear-gradient(
+          90deg,
+          var(--c1),
+          var(--c2)
+        );
+
+      color:#071018;
+
+      font-size:.74rem;
+
+      font-weight:800;
+    }
+
+    .news-item strong{
+      display:block;
+      color:#fff;
+      line-height:1.4;
+    }
+
+    .news-item small{
+      display:block;
+      color:#9fb0d9;
+      margin:4px 0 8px;
+    }
+
+    .news-item p{
+      color:#d8def0;
+      font-size:14px;
+      line-height:1.6;
+    }
+
+    .news-actions{
+      display:flex;
+      gap:8px;
+      margin-top:12px;
+      flex-wrap:wrap;
+    }
+
+    .mini-btn{
+
+      padding:8px 12px;
+
+      border:none;
+
+      border-radius:12px;
+
+      cursor:pointer;
+
+      font-weight:700;
+
+      font-size:.85rem;
+    }
+
+    .mini-btn.delete{
+
+      background:rgba(255,92,122,.14);
+
+      color:#ffd6df;
+    }
+
+    .mini-btn.edit{
+
+      background:rgba(0,229,255,.10);
+
+      color:#cfffff;
+    }
+
+    .empty-news{
+
+      padding:20px;
+
+      text-align:center;
+
+      color:var(--muted);
+
+      border-radius:18px;
+
+      background:
+        rgba(255,255,255,.03);
+
+      border:
+        1px dashed rgba(255,255,255,.12);
+    }
+
+    /* ===== BANNER ESPECIAL ===== */
+
+    .banner-preview{
+
+      position:relative;
+
+      width:100%;
+
+      min-height:260px;
+
+      border-radius:22px;
+
+      overflow:hidden;
+
+      background:#0b1020;
+
+      border:
+        1px solid rgba(255,255,255,.08);
+
+      margin-top:12px;
+    }
+
+    .banner-preview img{
+
+      width:100%;
+
+      height:260px;
+
+      object-fit:cover;
+    }
+
+    .banner-preview .overlay{
+
+      position:absolute;
+
+      inset:0;
+
+      display:flex;
+
+      flex-direction:column;
+
+      justify-content:flex-end;
+
+      padding:24px;
+
+      background:
+        linear-gradient(
+          transparent,
+          rgba(0,0,0,.85)
+        );
+    }
+
+    .banner-preview h2{
+
+      font-family:'Orbitron',sans-serif;
+
+      font-size:1.6rem;
+
+      margin-bottom:6px;
+    }
+
+    .banner-preview p{
+      color:#d8e3ff;
+    }
+
+    .switch-row{
+
+      display:flex;
+
+      justify-content:space-between;
+
+      align-items:center;
+
+      padding:14px 16px;
+
+      border-radius:16px;
+
+      background:
+        rgba(255,255,255,.03);
+
+      border:
+        1px solid rgba(255,255,255,.08);
+    }
+
+    .toggle{
+
+      width:60px;
+      height:32px;
+
+      border-radius:999px;
+
+      background:#182038;
+
+      position:relative;
+
+      cursor:pointer;
+
+      transition:all var(--transition);
+    }
+
+    .toggle::after{
+
+      content:"";
+
+      position:absolute;
+
+      width:24px;
+      height:24px;
+
+      border-radius:50%;
+
+      background:#fff;
+
+      left:4px;
+      top:4px;
+
+      transition:all var(--transition);
+    }
+
+    .toggle.active{
+
+      background:
+        linear-gradient(
+          90deg,
+          var(--c1),
+          var(--c2)
+        );
+    }
+
+    .toggle.active::after{
+      left:32px;
+    }
+
+    /* ===== RESPONSIVE ===== */
+
+    @media (max-width:1200px){
+
+      .stats{
+        grid-template-columns:
+          repeat(2, minmax(0, 1fr));
+      }
+
+      .main-grid{
+        grid-template-columns:1fr;
+      }
+    }
+
+    @media (max-width:860px){
+
+      .dashboard{
+        grid-template-columns:1fr;
+      }
+
+      .sidebar{
+        position:relative;
+        height:auto;
+      }
+
+      .content{
+        padding:18px;
+      }
+
+      .stats{
+        grid-template-columns:1fr;
+      }
+
+      .page-title{
+        font-size:1.4rem;
+      }
+    }
+
+    @media (max-width:768px){
+
+      .glass{
+        backdrop-filter:none;
+      }
+
+      .glow-border::before{
+        display:none;
+      }
+
+      body::after{
+        filter:blur(40px);
+        opacity:.6;
+      }
+    }
+
+    @media (prefers-reduced-motion:reduce){
+
+      *,
+      *::before,
+      *::after{
+
+        animation:none !important;
+
+        transition:none !important;
+      }
+    }
+
+  </style>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+
+</head>
+
+<body>
+
+  <!-- LOGIN -->
+  <section class="login-screen" id="loginScreen">
+
+    <div class="login-panel glass glow-border">
+
+      <div class="login-logo">
+        <img
+          src="/logo.png"
+          alt="World TV">
+      </div>
+
+      <h2>WORLD TV ADMIN</h2>
+
+      <p>
+        Centro de control de programación,
+        noticias y transmisiones.
+      </p>
+
+      <div class="field">
+        <label for="email">
+          Correo
+        </label>
+
+        <input
+          id="email"
+          class="input"
+          type="email"
+          placeholder="admin@worldtv.com">
+      </div>
+
+      <div class="field">
+        <label for="pass">
+          Contraseña
+        </label>
+
+        <input
+          id="pass"
+          class="input"
+          type="password"
+          placeholder="••••••••">
+      </div>
+
+      <button
+        class="btn btn-primary"
+        onclick="login()">
+
+        Entrar al Panel
+
+      </button>
+
+      <p
+        id="error"
+        class="error-text">
+      </p>
+
+    </div>
+
+  </section>
+
+  <!-- DASHBOARD -->
+  <section
+    id="dashboard"
+    class="dashboard hidden">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+      <div class="brand-box">
+
+        <div class="brand-badge">
+
+          <img
+            src="https://i.imgur.com/8OOJLfp.png"
+            alt="World TV">
+
+        </div>
+
+        <div class="brand-title">
+          WORLD TV
+        </div>
+
+        <div class="brand-sub">
+          Control Center
+        </div>
+
+      </div>
+
+      <div class="status-chip">
+
+        <span class="status-dot"></span>
+
+        Sistema conectado
+
+      </div>
+
+      <nav class="nav">
+
+        <a href="#panelProgramacion">
+          🎛 Programación
+        </a>
+
+        <a href="#panelBanner">
+          🎉 Banner Especial
+        </a>
+
+        <a href="#panelNoticias">
+          📰 Noticias
+        </a>
+
+        <a href="#previewPanel">
+          📺 Preview
+        </a>
+
+      </nav>
+
+      <button
+        class="logout-btn"
+        onclick="cerrar()">
+
+        Cerrar sesión
+
+      </button>
+
+    </aside>
+
+    <!-- CONTENT -->
+    <main class="content">
+
+      <div class="topbar">
+
+        <div class="page-title">
+          ADMIN DASHBOARD
+        </div>
+
+        <div class="top-right">
+
+          <div class="mini-chip">
+            World TV
+          </div>
+
+          <div
+            class="mini-chip"
+            id="currentDateChip">
+
+            Cargando...
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- LIVE CENTER -->
+      <div
+        class="glass"
+        style="
+        padding:16px;
+        margin-bottom:22px;
+        display:flex;
+        gap:12px;
+        flex-wrap:wrap;">
+
+        <div class="mini-chip">
+          ⚡ TIEMPO REAL
+        </div>
+
+        <div class="mini-chip">
+          📺 STREAM ACTIVO
+        </div>
+
+        <div class="mini-chip">
+          📰 <span id="liveNewsCount">0</span> Noticias
+        </div>
+
+      </div>
+
+      <!-- STATS -->
+      <section class="stats">
+
+        <div class="stat-card glass glow-border">
+
+          <div class="stat-label">
+            Programa actual
+          </div>
+
+          <div
+            class="stat-value"
+            id="statPrograma">
+
+            Sin datos
+
+          </div>
+
+        </div>
+
+        <div class="stat-card glass glow-border">
+
+          <div class="stat-label">
+            Horario
+          </div>
+
+          <div
+            class="stat-value"
+            id="statHorario">
+
+            --:--
+
+          </div>
+
+        </div>
+
+        <div class="stat-card glass glow-border">
+
+          <div class="stat-label">
+            Estado señal
+          </div>
+
+          <div
+            class="stat-value"
+            id="statURL">
+
+            Vacía
+
+          </div>
+
+        </div>
+
+        <div class="stat-card glass glow-border">
+
+          <div class="stat-label">
+            Noticias
+          </div>
+
+          <div
+            class="stat-value"
+            id="statNoticias">
+
+            0
+
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- MAIN GRID -->
+      <section class="main-grid">
+                  <!-- COLUMNA IZQUIERDA -->
+        <div class="stack">
+
+          <!-- PROGRAMACIÓN -->
+          <div
+            class="card glass glow-border"
+            id="panelProgramacion">
+
+            <div class="card-title">
+              <h3>Editor de Programación</h3>
+            </div>
+
+            <p class="card-sub">
+              Actualiza en tiempo real la transmisión principal visible en la web.
+            </p>
+
+            <div class="form-grid">
+
+              <div class="field">
+                <label for="titulo">
+                  Título del programa
+                </label>
+
+                <input
+                  id="titulo"
+                  class="input"
+                  placeholder="Ej: World TV Music Live">
+              </div>
+
+              <div class="field">
+                <label for="url">
+                  URL del Stream
+                </label>
+
+                <input
+                  id="url"
+                  class="input"
+                  placeholder="https://..."
+                  oninput="preview()">
+              </div>
+
+              <div class="field">
+                <label for="hora">
+                  Horario
+                </label>
+
+                <input
+                  id="hora"
+                  class="input"
+                  placeholder="Ej: Hasta las 22:00 hs">
+              </div>
+
+            </div>
+
+            <div class="actions">
+
+              <button
+                class="btn btn-primary"
+                onclick="guardar()">
+
+                Guardar cambios
+
+              </button>
+
+              <button
+                class="btn btn-secondary"
+                onclick="cargar()">
+
+                Recargar
+
+              </button>
+
+            </div>
+
+            <p
+              id="msg"
+              class="save-msg">
+            </p>
+
+            <div class="helper-line">
+
+              <span class="helper-chip">
+                Visible en Inicio
+              </span>
+
+              <span class="helper-chip">
+                Visible en En Vivo
+              </span>
+
+              <span class="helper-chip">
+                Actualización Instantánea
+              </span>
+
+            </div>
+
+          </div>
+          
+          <div class="card glass glow-border" id="panelProximo">
+
+  <div class="card-title">
+    <h3>Próximo Programa</h3>
+  </div>
+
+  <div class="form-grid">
+
+    <div class="field">
+      <label>Título</label>
+      <input id="nextTitulo" class="input">
+    </div>
+
+    <div class="field">
+      <label>Horario</label>
+      <input id="nextHorario" class="input" placeholder="22:00 hs">
+    </div>
+
+    <div class="field">
+      <label>Fecha y hora de inicio</label>
+      <input id="nextStart" class="input" type="datetime-local">
+    </div>
+
+    <div class="field">
+      <label>Imagen (opcional)</label>
+      <input id="nextImagen" class="input" placeholder="https://...">
+    </div>
+
+  </div>
+
+  <div class="actions">
+
+    <button
+      class="btn btn-primary"
+      onclick="guardarProximoPrograma()">
+
+      Guardar Próximo Programa
+
+    </button>
+
+  </div>
+
+  <p id="nextMsg" class="save-msg"></p>
+
+</div>
+
+
+
+<!-- POSTER DEL REPRODUCTOR -->
+<div class="card glass glow-border" id="panelPoster">
+
+  <div class="card-title">
+    <h3>Poster del Reproductor</h3>
+  </div>
+
+  <p class="card-sub">
+    Imagen que aparece antes de reproducir el video.
+  </p>
+
+  <div class="form-grid">
+
+    <div class="field">
+      <label>URL de la imagen (Poster)</label>
+      <input id="posterUrl" class="input" placeholder="https://imagen.jpg" oninput="previewPoster()">
+    </div>
+
+    <div>
+      <label style="margin-bottom:8px;display:block">Vista previa</label>
+      <img id="posterPreview" style="width:100%; max-height:200px; object-fit:cover; border-radius:16px; border:1px solid rgba(255,255,255,.1);">
+    </div>
+
+  </div>
+
+  <div class="actions">
+    <button class="btn btn-primary" onclick="guardarPoster()">Guardar Poster</button>
+    <button class="btn btn-secondary" onclick="cargarPoster()">Recargar</button>
+  </div>
+
+  <p id="posterMsg" class="save-msg"></p>
+
+</div>
+
+          <!-- BANNER ESPECIAL -->
+          <div
+            class="card glass glow-border"
+            id="panelBanner">
+
+            <div class="card-title">
+              <h3>Banner Especial</h3>
+            </div>
+
+            <p class="card-sub">
+              Promociona eventos especiales, transmisiones importantes o anuncios destacados.
+            </p>
+
+            <div class="switch-row">
+
+              <span>
+                Banner activo
+              </span>
+
+              <div
+                id="bannerToggle"
+                class="toggle"
+                onclick="toggleBanner()">
+              </div>
+
+            </div>
+
+            <br>
+
+            <div class="form-grid">
+
+              <div class="field">
+
+                <label>
+                  Título
+                </label>
+
+                <input
+                  id="bannerTitulo"
+                  class="input"
+                  placeholder="Programación Especial">
+
+              </div>
+
+              <div class="field">
+
+                <label>
+                  Imagen
+                </label>
+
+                <input
+                  id="bannerImagen"
+                  class="input"
+                  placeholder="https://imagen.jpg">
+
+              </div>
+
+              <div class="field">
+
+                <label>
+                  Descripción
+                </label>
+
+                <textarea
+                  id="bannerDescripcion"
+                  class="input"
+                  placeholder="Descripción del evento..."></textarea>
+
+              </div>
+
+              <div class="field">
+
+                <label>
+                  Texto del botón
+                </label>
+
+                <input
+                  id="bannerBoton"
+                  class="input"
+                  placeholder="Ver ahora">
+
+              </div>
+
+              <div class="field">
+
+                <label>
+                  URL del botón
+                </label>
+
+                <input
+                  id="bannerURL"
+                  class="input"
+                  placeholder="https://...">
+
+              </div>
+
+            </div>
+
+            <div class="actions">
+
+              <button
+                class="btn btn-primary"
+                onclick="guardarBanner()">
+
+                Guardar Banner
+
+              </button>
+
+              <button
+                class="btn btn-secondary"
+                onclick="cargarBanner()">
+
+                Recargar Banner
+
+              </button>
+
+            </div>
+
+            <p
+              id="bannerMsg"
+              class="save-msg">
+            </p>
+
+          </div>
+
+          <!-- NOTICIAS -->
+          <div
+            class="card glass glow-border"
+            id="panelNoticias">
+
+            <div class="card-title">
+              <h3>Publicar Noticia</h3>
+            </div>
+
+            <p class="card-sub">
+              Las noticias aparecen automáticamente en el sitio público.
+            </p>
+
+            <div class="form-grid">
+
+              <div class="field">
+
+                <label>
+                  Categoría
+                </label>
+
+                <select
+                  id="notTipo"
+                  class="input">
+
+                  <option value="Farándula">Farándula</option>
+                  <option value="Celebridades">Celebridades</option>
+                  <option value="Espectáculos">Espectáculos</option>
+                  <option value="Música">Música</option>
+                  <option value="Streaming">Streaming</option>
+                  <option value="Tendencias">Tendencias</option>
+                  <option value="Internacional">Internacional</option>
+
+                </select>
+
+              </div>
+
+              <div class="field">
+
+                <label>
+                  Título
+                </label>
+
+                <input
+                  id="notTitulo"
+                  class="input"
+                  placeholder="Título de la noticia">
+
+              </div>
+
+              <div class="field">
+
+                <label>
+                  Fecha
+                </label>
+
+                <input
+                  id="notFecha"
+                  class="input"
+                  type="date">
+
+              </div>
+
+              <div class="field">
+
+                <label>
+                  Imagen
+                </label>
+
+                <input
+                  id="notImagen"
+                  class="input"
+                  placeholder="https://imagen.jpg">
+
+              </div>
+
+              <div class="field">
+
+                <label>
+                  Resumen
+                </label>
+
+                <textarea
+                  id="notResumen"
+                  class="input"
+                  placeholder="Resumen breve">
+                </textarea>
+
+              </div>
+
+            </div>
+
+            <div class="actions">
+
+              <button
+                class="btn btn-primary"
+                onclick="guardarNoticia()">
+
+                Publicar
+
+              </button>
+
+              <button
+                class="btn btn-secondary"
+                onclick="limpiarFormularioNoticia()">
+
+                Limpiar
+
+              </button>
+
+            </div>
+
+            <p
+              id="noticiaMsg"
+              class="save-msg">
+            </p>
+
+          </div>
+
+        </div>
+
+        <!-- COLUMNA DERECHA -->
+        <div class="stack">
+                      <!-- PREVIEW STREAM -->
+          <div
+            class="card glass glow-border"
+            id="previewPanel">
+
+            <div class="card-title">
+              <h3>Vista Previa de Stream</h3>
+            </div>
+
+            <p class="card-sub">
+              Comprobá rápidamente la señal cargada.
+            </p>
+
+            <div class="preview-shell">
+
+              <iframe
+                id="iframe"
+                src="about:blank"
+                title="Vista previa">
+              </iframe>
+
+            </div>
+
+            <div class="public-info">
+
+              <h4 id="ptitulo">
+                Cargando…
+              </h4>
+
+              <p id="phora">
+              </p>
+
+              <p id="purl">
+                Sin URL configurada
+              </p>
+
+            </div>
+
+          </div>
+
+          <!-- PREVIEW BANNER ESPECIAL -->
+          <div
+            class="card glass glow-border">
+
+            <div class="card-title">
+              <h3>Vista Previa del Banner</h3>
+            </div>
+
+            <p class="card-sub">
+              Así se verá en la web principal.
+            </p>
+
+            <div class="banner-preview">
+
+              <img
+                id="bannerPreviewImg"
+                alt="Banner">
+
+              <div class="overlay">
+
+                <h2 id="bannerPreviewTitle">
+                  Programación Especial
+                </h2>
+
+                <p id="bannerPreviewDesc">
+                  Vista previa
+                </p>
+
+              </div>
+
+            </div>
+
+          </div>
+
+          <!-- LISTA DE NOTICIAS -->
+          <div
+            class="card glass glow-border">
+
+            <div class="card-title">
+              <h3>Noticias Publicadas</h3>
+            </div>
+
+            <p class="card-sub">
+              Administración de las noticias activas.
+            </p>
+
+            <div
+              class="news-list"
+              id="adminNoticiasLista">
+
+              <div class="empty-news">
+                No hay noticias cargadas.
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+    </main>
+
+  </section>
+
+  <!-- ===== SCRIPTS ===== -->
+  <script>
+          const firebaseConfig = {
+      apiKey: "AIzaSyCxAp5gwA4sJ2UUnRUTLRNBsZIl-di0aN4",
+      authDomain: "worldtv-d9f22.firebaseapp.com",
+      projectId: "worldtv-d9f22",
+      storageBucket: "worldtv-d9f22.appspot.com",
+      messagingSenderId: "1056595783914",
+      appId: "1:1056595783914:web:b2ba6bb924772df1152793"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+
+    const db = firebase.firestore();
+
+    const $ = (id) => document.getElementById(id);
+
+    let totalNoticias = 0;
+    let bannerActivo = false;
+
+    /* ==========================
+       FECHA
+    ========================== */
+
+    function formatDateChip(){
+
+      const now = new Date();
+
+      $("currentDateChip").textContent =
+        now.toLocaleDateString("es-ES",{
+          weekday:"short",
+          day:"2-digit",
+          month:"short",
+          year:"numeric"
+        });
+
+    }
+
+    formatDateChip();
+
+    /* ==========================
+       LOGIN
+    ========================== */
+
+    function login(){
+
+      const email = $("email").value.trim();
+      const pass = $("pass").value.trim();
+
+      $("error").textContent = "";
+
+      db.collection("admins")
+      .doc("admin1")
+      .get()
+
+      .then((doc)=>{
+
+        if(!doc.exists){
+          $("error").textContent =
+            "Administrador no encontrado";
+          return;
+        }
+
+        const admin = doc.data();
+
+        if(
+          email === admin.email &&
+          pass === admin.password
+        ){
+
+          $("loginScreen").classList.add("hidden");
+          $("dashboard").classList.remove("hidden");
+
+          cargar();
+          cargarBanner();
+          cargarPoster();
+          cargarNoticiasAdmin();
+
+        }else{
+
+          $("error").textContent =
+            "Credenciales incorrectas";
+
+        }
+
+      })
+
+      .catch(()=>{
+
+        $("error").textContent =
+          "Error de conexión";
+
+      });
+
+    }
+
+    function cerrar(){
+
+      $("dashboard").classList.add("hidden");
+      $("loginScreen").classList.remove("hidden");
+
+      $("pass").value = "";
+
+    }
+
+    /* ==========================
+       PROGRAMACIÓN
+    ========================== */
+
+    function cargar(){
+        db.collection("programacion")
+.doc("proximo")
+.get()
+.then(doc=>{
+
+  if(!doc.exists) return;
+
+  const p = doc.data();
+
+  $("nextTitulo").value =
+    p.titulo || "";
+
+  $("nextHorario").value =
+    p.horario || "";
+
+  $("nextStart").value =
+    p.inicio || "";
+
+  $("nextImagen").value =
+    p.imagen || "";
+
+});
+
+      db.collection("programacion")
+      .doc("actual")
+      .get()
+
+      .then((doc)=>{
+
+        if(!doc.exists) return;
+
+        const data = doc.data();
+
+        $("titulo").value =
+          data.titulo || "";
+
+        $("url").value =
+          data.streamURL || "";
+
+        $("hora").value =
+          data.horario || "";
+
+        preview();
+
+        updateProgramStats(data);
+        updatePreviewInfo(data);
+
+      });
+
+    }
+
+    function guardar(){
+
+      const data = {
+
+        titulo:
+          $("titulo").value.trim(),
+
+        streamURL:
+          $("url").value.trim(),
+
+        horario:
+          $("hora").value.trim()
+
+      };
+
+      db.collection("programacion")
+      .doc("actual")
+      .set(data)
+
+      .then(()=>{
+
+        $("msg").textContent =
+          "Programación guardada ✔";
+
+        updateProgramStats(data);
+        updatePreviewInfo(data);
+
+      })
+
+      .catch(()=>{
+
+        $("msg").textContent =
+          "Error al guardar";
+
+      });
+
+    }
+
+    function preview(){
+
+      const url =
+        $("url").value.trim();
+
+      $("iframe").src =
+        url || "about:blank";
+
+      $("purl").textContent =
+        url || "Sin URL";
+
+      $("statURL").textContent =
+        url ? "Activa" : "Vacía";
+
+    }
+
+    function updateProgramStats(data){
+
+      $("statPrograma").textContent =
+        data.titulo || "Sin datos";
+
+      $("statHorario").textContent =
+        data.horario || "--:--";
+
+      $("statURL").textContent =
+        data.streamURL ? "Activa" : "Vacía";
+
+    }
+
+    function updatePreviewInfo(data){
+
+      $("ptitulo").textContent =
+        data.titulo || "En Vivo";
+
+      $("phora").textContent =
+        data.horario || "";
+
+      $("purl").textContent =
+        data.streamURL || "Sin URL";
+
+    }
+
+    /* ==========================
+       BANNER ESPECIAL
+    ========================== */
+
+    async function cargarBanner(){
+
+      const ref =
+        db.collection("banners")
+        .doc("principal");
+
+      const doc =
+        await ref.get();
+
+      if(!doc.exists){
+
+        await ref.set({
+
+          activo:false,
+
+          titulo:"",
+          descripcion:"",
+          imagen:"",
+
+          botonTexto:"Ver ahora",
+
+          botonURL:""
+
+        });
+
+      }
+
+      ref.onSnapshot((snap)=>{
+
+        const data = snap.data();
+
+        if(!data) return;
+
+        bannerActivo =
+          !!data.activo;
+
+        updateToggle();
+
+        $("bannerTitulo").value =
+          data.titulo || "";
+
+        $("bannerDescripcion").value =
+          data.descripcion || "";
+
+        $("bannerImagen").value =
+          data.imagen || "";
+
+        $("bannerBoton").value =
+          data.botonTexto || "";
+
+        $("bannerURL").value =
+          data.botonURL || "";
+
+        updateBannerPreview();
+
+      });
+
+    }
+
+    function toggleBanner(){
+
+      bannerActivo =
+        !bannerActivo;
+
+      updateToggle();
+
+    }
+
+    function updateToggle(){
+
+      $("bannerToggle")
+      .classList.toggle(
+        "active",
+        bannerActivo
+      );
+
+    }
+
+    function updateBannerPreview(){
+
+      $("bannerPreviewTitle").textContent =
+        $("bannerTitulo").value ||
+        "Programación Especial";
+
+      $("bannerPreviewDesc").textContent =
+        $("bannerDescripcion").value ||
+        "Descripción";
+
+      $("bannerPreviewImg").src =
+        $("bannerImagen").value ||
+        "https://images.unsplash.com/photo-1506157786151-b8491531f063?auto=format&fit=crop&w=1200&q=80";
+
+    }
+
+    [
+      "bannerTitulo",
+      "bannerDescripcion",
+      "bannerImagen"
+    ].forEach(id=>{
+
+      $(id).addEventListener(
+        "input",
+        updateBannerPreview
+      );
+
+    });
+
+    function guardarBanner(){
+
+      db.collection("banners")
+      .doc("principal")
+      .set({
+
+        activo:
+          bannerActivo,
+
+        titulo:
+          $("bannerTitulo").value.trim(),
+
+        descripcion:
+          $("bannerDescripcion").value.trim(),
+
+        imagen:
+          $("bannerImagen").value.trim(),
+
+        botonTexto:
+          $("bannerBoton").value.trim(),
+
+        botonURL:
+          $("bannerURL").value.trim()
+
+      })
+
+      .then(()=>{
+
+        $("bannerMsg").textContent =
+          "Banner guardado ✔";
+
+      })
+
+      .catch(()=>{
+
+        $("bannerMsg").textContent =
+          "Error al guardar";
+
+      });
+
+    }
+    
+        /* ==========================
+       NOTICIAS
+    ========================== */
+
+    function guardarNoticia(){
+
+      const tipo =
+        $("notTipo").value.trim();
+
+      const titulo =
+        $("notTitulo").value.trim();
+
+      const fecha =
+        $("notFecha").value;
+
+      const imagen =
+        $("notImagen").value.trim();
+
+      const resumen =
+        $("notResumen").value.trim();
+
+      const msg =
+        $("noticiaMsg");
+
+      msg.textContent = "";
+
+      if(
+        !tipo ||
+        !titulo ||
+        !fecha ||
+        !resumen
+      ){
+
+        msg.textContent =
+          "Completá todos los campos";
+
+        return;
+      }
+
+      db.collection("noticias")
+      .add({
+
+        tipo,
+        titulo,
+        fecha,
+        imagen,
+        resumen,
+
+        creado:
+          firebase.firestore
+          .FieldValue
+          .serverTimestamp()
+
+      })
+
+      .then(()=>{
+
+        msg.textContent =
+          "Noticia publicada ✔";
+
+        limpiarFormularioNoticia();
+
+      })
+
+      .catch((err)=>{
+
+        console.error(err);
+
+        msg.textContent =
+          "Error al publicar";
+
+      });
+
+    }
+
+    function limpiarFormularioNoticia(){
+
+      $("notTipo").value =
+        "Farándula";
+
+      $("notTitulo").value = "";
+      $("notFecha").value = "";
+      $("notImagen").value = "";
+      $("notResumen").value = "";
+
+    }
+
+    function cargarNoticiasAdmin(){
+
+      db.collection("noticias")
+      .orderBy("fecha","desc")
+
+      .onSnapshot((snapshot)=>{
+
+        const lista =
+          $("adminNoticiasLista");
+
+        lista.innerHTML = "";
+
+        totalNoticias =
+          snapshot.size;
+
+        $("statNoticias").textContent =
+          totalNoticias;
+
+        const liveCounter =
+          $("liveNewsCount");
+
+        if(liveCounter){
+
+          liveCounter.textContent =
+            totalNoticias;
+
+        }
+
+        if(snapshot.empty){
+
+          lista.innerHTML = `
+            <div class="empty-news">
+              No hay noticias cargadas.
+            </div>
+          `;
+
+          return;
+        }
+
+        snapshot.forEach((doc)=>{
+
+          const n =
+            doc.data();
+
+          const img =
+            n.imagen
+            ? `
+            <img
+              src="${n.imagen}"
+              alt=""
+              style="
+              width:100%;
+              height:140px;
+              object-fit:cover;
+              border-radius:14px;
+              margin-bottom:10px;">
+            `
+            : "";
+
+          lista.innerHTML += `
+
+            <div class="news-item">
+
+              ${img}
+
+              <div class="news-item-top">
+
+                <div>
+
+                  <strong>
+                    ${n.titulo || "Sin título"}
+                  </strong>
+
+                  <small>
+                    ${n.fecha || ""}
+                  </small>
+
+                </div>
+
+                <span class="news-badge">
+                  ${n.tipo || "Noticias"}
+                </span>
+
+              </div>
+
+              <p>
+                ${n.resumen || ""}
+              </p>
+
+              <div class="news-actions">
+
+                <button
+                  class="mini-btn delete"
+                  onclick="eliminarNoticia('${doc.id}')">
+
+                  Eliminar
+
+                </button>
+
+              </div>
+
+            </div>
+
+          `;
+
+        });
+
+      });
+
+    }
+
+    function eliminarNoticia(id){
+
+      if(
+        !confirm(
+          "¿Eliminar esta noticia?"
+        )
+      ){
+        return;
+      }
+
+      db.collection("noticias")
+      .doc(id)
+      .delete()
+
+      .catch(console.error);
+
+    }
+
+    /* ==========================
+       LISTENERS
+    ========================== */
+
+    db.collection("programacion")
+    .doc("actual")
+    .onSnapshot((doc)=>{
+
+      if(!doc.exists) return;
+
+      const data =
+        doc.data();
+
+      updateProgramStats(data);
+      updatePreviewInfo(data);
+
+    });
+
+    /* ==========================
+       ENTER LOGIN
+    ========================== */
+
+    $("pass")
+    .addEventListener(
+      "keydown",
+      (e)=>{
+
+        if(e.key === "Enter"){
+          login();
+        }
+
+      }
+    );
+
+    /* ==========================
+       REDUCED MOTION
+    ========================== */
+
+    if(
+      window.matchMedia &&
+      window.matchMedia(
+        "(prefers-reduced-motion: reduce)"
+      ).matches
+    ){
+
+      document.documentElement
+      .classList
+      .add("reduced-motion");
+
+    }
+
+/* ==========================
+   POSTER DEL REPRODUCTOR
+========================== */
+
+async function cargarPoster() {
+  const ref = db.collection("config").doc("player");
+
+  const doc = await ref.get();
+
+  if (!doc.exists) {
+    await ref.set({
+      poster: "https://via.placeholder.com/1280x720.png?text=Poster+WorldTV",
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+  }
+
+  ref.onSnapshot((snap) => {
+    const data = snap.data();
+    if (!data) return;
+
+    $("posterUrl").value = data.poster || "";
+    previewPoster();
+  });
+}
+
+function previewPoster() {
+  const url = $("posterUrl").value.trim();
+  $("posterPreview").src = url || "https://via.placeholder.com/1280x720.png?text=Sin+imagen";
+}
+
+function guardarPoster() {
+  const url = $("posterUrl").value.trim();
+  const msg = $("posterMsg");
+
+  if (!url) {
+    msg.textContent = "Ingresa una URL válida";
+    return;
+  }
+
+  db.collection("config").doc("player").set({
+    poster: url,
+    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+  }, { merge: true })
+  .then(() => {
+    msg.textContent = "Poster guardado ✔";
+  })
+  .catch(() => {
+    msg.textContent = "Error al guardar";
+  });
+}
+function guardarProximoPrograma(){
+
+  db.collection("programacion")
+  .doc("proximo")
+  .set({
+
+    titulo:
+      $("nextTitulo").value.trim(),
+
+    horario:
+      $("nextHorario").value.trim(),
+
+    inicio:
+      $("nextStart").value,
+
+    imagen:
+      $("nextImagen").value.trim()
+
+  })
+
+  .then(()=>{
+
+    $("nextMsg").textContent =
+      "Próximo programa guardado ✔";
+
+  });
+
+}
+  </script>
+
+</body>
+  </html>
