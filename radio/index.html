@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="World TV Radio - Escucha nuestra radio online 24/7">
+  <meta name="theme-color" content="#0a0e1a">
+  <title>World TV Radio • En vivo 24/7</title>
+  <link rel="icon" href="/logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+
+  <style>
+    :root {
+      --primary: #00d4ff;
+      --success: #10b981;
+      --g3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      --g1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --g2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      --glass: rgba(255,255,255,0.03);
+      --glass-b: rgba(255,255,255,0.08);
+      --bg: #0a0e1a;
+      --bg2: #111827;
+      --bg3: #1f2937;
+      --txt: #ffffff;
+      --txt2: #9ca3af;
+      --txt3: #6b7280;
+      --radius: 16px;
+      --radius-lg: 24px;
+      --sidebar: 270px;
+      --tr: 250ms cubic-bezier(0.4,0,0.2,1);
+      --glow: 0 0 30px rgba(0,212,255,0.15);
+    }
+
+    .light {
+      --glass: rgba(0,0,0,0.04);
+      --glass-b: rgba(0,0,0,0.1);
+      --bg: #f0f4f8;
+      --bg2: #ffffff;
+      --bg3: #e2e8f0;
+      --txt: #0f172a;
+      --txt2: #475569;
+      --txt3: #94a3b8;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      color: var(--txt);
+      background: var(--bg);
+      overflow-x: hidden;
+      line-height: 1.6;
+      transition: background var(--tr), color var(--tr);
+    }
+
+    .bg-mesh {
+      position: fixed; inset: 0; z-index: -1;
+      background:
+        radial-gradient(circle at 20% 50%, rgba(120,119,198,0.18) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(0,212,255,0.07) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg2); }
+    ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 3px; }
+
+    h1,h2,h3,h4 { font-family: 'Outfit', sans-serif; line-height: 1.2; }
+
+    .glass {
+      background: var(--glass);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-b);
+    }
+
+    .glass-strong {
+      background: rgba(17,24,39,0.88);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid var(--glass-b);
+    }
+
+    .light .glass-strong { background: rgba(255,255,255,0.92); }
+
+    .grad-text {
+      background: var(--g3);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* ── MENU BTN ── */
+    .menu-btn {
+      display: none;
+      position: fixed; top: 16px; left: 16px;
+      z-index: 1600; width: 46px; height: 46px;
+      border: 1px solid var(--glass-b); border-radius: 12px;
+      background: rgba(17,24,39,0.92); backdrop-filter: blur(10px);
+      cursor: pointer; align-items: center; justify-content: center;
+      flex-direction: column; gap: 5px;
+    }
+
+    .menu-btn span {
+      width: 22px; height: 2px; background: var(--txt);
+      border-radius: 2px; transition: var(--tr); display: block;
+    }
+
+    .menu-btn.active span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .menu-btn.active span:nth-child(2) { opacity: 0; }
+    .menu-btn.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      position: fixed; top: 0; left: 0;
+      width: var(--sidebar); height: 100vh;
+      padding: 20px 16px; overflow-y: auto;
+      z-index: 1200; display: flex; flex-direction: column;
+    }
+
+    .brand-box {
+      text-align: center; padding: 16px 0 24px;
+      border-bottom: 1px solid var(--glass-b); margin-bottom: 20px;
+    }
+
+    .logo-wrap {
+      width: 80px; height: 80px; margin: 0 auto 12px;
+      border-radius: 20px; background: var(--glass);
+      border: 1px solid var(--glass-b);
+      display: grid; place-items: center; overflow: hidden;
+    }
+
+    .logo-wrap img { width: 50px; height: 50px; object-fit: contain; }
+
+    .brand-title { font-size: 1.6rem; font-weight: 800; margin-bottom: 2px; }
+    .brand-sub { color: var(--txt2); font-size: 0.8rem; }
+
+    .nav { display: flex; flex-direction: column; gap: 4px; flex: 1; }
+
+    .nav-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 16px; border-radius: 12px;
+      color: var(--txt2); font-weight: 600; font-size: 0.9rem;
+      transition: background var(--tr), color var(--tr);
+      text-decoration: none; position: relative;
+    }
+
+    .nav-item:hover, .nav-item.active { color: var(--txt); background: var(--glass); }
+
+    .nav-item.active::before {
+      content: ''; position: absolute; left: 0; top: 20%; bottom: 20%;
+      width: 3px; background: var(--g3); border-radius: 0 3px 3px 0;
+    }
+
+    .nav-icon { width: 20px; text-align: center; font-size: 1rem; }
+
+    .user-panel {
+      margin-top: auto; padding: 16px;
+      border-radius: var(--radius);
+      background: var(--glass); border: 1px solid var(--glass-b);
+    }
+
+    .login-helper {
+      text-align: center; color: var(--txt3);
+      font-size: 0.75rem; margin-bottom: 10px;
+      text-transform: uppercase; letter-spacing: 1px;
+    }
+
+    /* ── MAIN ── */
+    .main {
+      margin-left: var(--sidebar);
+      padding: 20px 28px 60px;
+      min-height: 100vh;
+    }
+
+    /* ── TOPBAR ── */
+    .topbar {
+      position: sticky; top: 12px; z-index: 100;
+      border-radius: var(--radius-lg);
+      display: flex; align-items: center;
+      justify-content: space-between; gap: 16px;
+      padding: 12px 20px; margin-bottom: 36px;
+    }
+
+    .brandmark { display: flex; align-items: center; gap: 12px; }
+
+    .brand-icon {
+      width: 44px; height: 44px; border-radius: 12px;
+      background: var(--g3); display: grid; place-items: center;
+      font-size: 1.3rem; color: #0a0e1a; flex-shrink: 0;
+    }
+
+    .brand-text h1 { font-size: 1.3rem; font-weight: 800; }
+    .brand-text span { color: var(--txt2); font-size: 0.8rem; }
+
+    .topbar-actions { display: flex; align-items: center; gap: 8px; }
+
+    .btn-icon {
+      width: 40px; height: 40px; border-radius: 10px;
+      border: 1px solid var(--glass-b); background: var(--glass);
+      color: var(--txt); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; transition: background var(--tr), transform var(--tr);
+    }
+
+    .btn-icon:hover { background: rgba(255,255,255,0.08); transform: translateY(-1px); }
+
+    /* ── HERO RADIO ── */
+    .radio-hero {
+      border-radius: var(--radius-lg);
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      padding: 48px;
+      margin-bottom: 36px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      gap: 48px;
+    }
+
+    .radio-hero::before {
+      content: '';
+      position: absolute; top: -40%; right: -10%;
+      width: 500px; height: 500px;
+      background: var(--g3); opacity: 0.07;
+      filter: blur(100px); border-radius: 50%;
+      pointer-events: none;
+    }
+
+    /* Disco animado */
+    .disc-wrap {
+      flex-shrink: 0;
+      position: relative;
+      width: 180px; height: 180px;
+      z-index: 1;
+    }
+
+    .disc {
+      width: 180px; height: 180px;
+      border-radius: 50%;
+      background: conic-gradient(from 0deg, #1db954, #00d4ff, #7c3aed, #f472b6, #1db954);
+      display: grid; place-items: center;
+      box-shadow: 0 0 60px rgba(0,212,255,0.25), 0 0 120px rgba(124,58,237,0.15);
+      position: relative;
+    }
+
+    .disc.spinning { animation: spin 4s linear infinite; }
+
+    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+    .disc-inner {
+      width: 70px; height: 70px;
+      border-radius: 50%;
+      background: #0a0e1a;
+      display: grid; place-items: center;
+      font-size: 1.6rem;
+      color: var(--primary);
+      border: 3px solid rgba(0,212,255,0.2);
+      position: absolute;
+    }
+
+    .disc-rings {
+      position: absolute; inset: -12px;
+      border-radius: 50%;
+      border: 1px solid rgba(0,212,255,0.15);
+      animation: ringPulse 3s ease-in-out infinite;
+    }
+
+    .disc-rings:nth-child(2) {
+      inset: -24px;
+      animation-delay: 0.5s;
+      border-color: rgba(124,58,237,0.12);
+    }
+
+    @keyframes ringPulse {
+      0%,100% { opacity: 0.5; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.02); }
+    }
+
+    /* Info hero */
+    .radio-hero-info { flex: 1; position: relative; z-index: 1; }
+
+    .live-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 14px;
+      background: rgba(255,8,68,0.15); border: 1px solid rgba(255,8,68,0.3);
+      border-radius: 999px; color: #ff4d6d;
+      font-size: 0.8rem; font-weight: 700;
+      margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px;
+    }
+
+    .live-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: #ff4d6d;
+      animation: liveDot 1.5s ease-in-out infinite;
+    }
+
+    @keyframes liveDot {
+      0%,100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(1.3); }
+    }
+
+    .radio-hero-info h2 {
+      font-size: clamp(1.8rem, 3.5vw, 3rem);
+      font-weight: 900; color: #fff; margin-bottom: 12px;
+    }
+
+    .radio-hero-info p {
+      color: rgba(255,255,255,0.65);
+      font-size: 1rem; line-height: 1.7;
+      max-width: 420px; margin-bottom: 28px;
+    }
+
+    /* ── PLAYER CARD ── */
+    .player-card {
+      background: var(--glass);
+      border: 1px solid var(--glass-b);
+      border-radius: var(--radius-lg);
+      padding: 28px 32px;
+      margin-bottom: 36px;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      flex-wrap: wrap;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+
+    .player-art {
+      width: 72px; height: 72px;
+      border-radius: 16px;
+      background: var(--g3);
+      display: grid; place-items: center;
+      font-size: 2rem; flex-shrink: 0;
+      color: #0a0e1a;
+      box-shadow: var(--glow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .player-art::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.2), transparent);
+    }
+
+    .player-info { flex: 1; min-width: 160px; }
+
+    .player-title {
+      font-size: 1.2rem; font-weight: 700;
+      color: var(--txt); margin-bottom: 4px;
+    }
+
+    .player-sub {
+      font-size: 0.875rem; color: var(--txt2);
+      display: flex; align-items: center; gap: 6px;
+    }
+
+    .on-air {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 2px 8px;
+      background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.25);
+      border-radius: 4px; color: var(--success);
+      font-size: 0.7rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.5px;
+    }
+
+    /* Visualizer */
+    .player-viz {
+      display: flex; align-items: flex-end;
+      gap: 3px; height: 44px; padding: 0 8px;
+    }
+
+    .vbar {
+      width: 4px; border-radius: 2px;
+      background: var(--g3);
+      transition: height 0.1s;
+    }
+
+    /* Controles */
+    .player-controls {
+      display: flex; align-items: center; gap: 12px;
+    }
+
+    .ctrl-btn {
+      width: 44px; height: 44px; border-radius: 50%;
+      border: 1px solid var(--glass-b); background: var(--glass);
+      color: var(--txt); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; transition: background var(--tr), transform var(--tr);
+    }
+
+    .ctrl-btn:hover { background: rgba(255,255,255,0.1); transform: scale(1.08); }
+
+    .ctrl-btn.play {
+      width: 60px; height: 60px;
+      background: var(--g3); color: #0a0e1a;
+      font-size: 1.4rem; box-shadow: var(--glow); border: none;
+    }
+
+    .ctrl-btn.play:hover { transform: scale(1.1); box-shadow: 0 0 40px rgba(0,212,255,0.4); }
+
+    /* Volume */
+    .vol-wrap {
+      display: flex; align-items: center; gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .vol-icon { color: var(--txt2); font-size: 0.95rem; cursor: pointer; transition: color var(--tr); }
+    .vol-icon:hover { color: var(--primary); }
+
+    .vol-slider {
+      width: 100px; height: 4px;
+      -webkit-appearance: none; appearance: none;
+      background: var(--glass-b); border-radius: 2px; outline: none;
+    }
+
+    .vol-slider::-webkit-slider-thumb {
+      -webkit-appearance: none; width: 14px; height: 14px;
+      border-radius: 50%; background: var(--primary); cursor: pointer;
+      box-shadow: 0 0 8px rgba(0,212,255,0.4);
+    }
+
+    /* ── STATS ROW ── */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 36px;
+    }
+
+    .stat-mini {
+      background: var(--glass); border: 1px solid var(--glass-b);
+      border-radius: var(--radius-lg); padding: 20px 24px;
+      display: flex; align-items: center; gap: 16px;
+      transition: transform var(--tr), box-shadow var(--tr);
+    }
+
+    .stat-mini:hover { transform: translateY(-2px); box-shadow: var(--glow); }
+
+    .stat-mini-icon {
+      width: 44px; height: 44px; border-radius: 12px;
+      display: grid; place-items: center; font-size: 1.2rem; flex-shrink: 0;
+    }
+
+    .smi-cyan   { background: rgba(0,212,255,0.12); color: var(--primary); }
+    .smi-green  { background: rgba(16,185,129,0.12); color: var(--success); }
+    .smi-purple { background: rgba(124,58,237,0.12); color: #a78bfa; }
+
+    .smi-info { min-width: 0; }
+    .smi-val  { font-size: 1.3rem; font-weight: 800; font-family: 'Outfit', sans-serif; }
+    .smi-lbl  { font-size: 0.75rem; color: var(--txt3); margin-top: 2px; }
+
+    /* ── SECTION HEADER ── */
+    .sec-header {
+      display: flex; align-items: center;
+      justify-content: space-between; margin-bottom: 20px;
+    }
+
+    .sec-title {
+      font-size: 1.3rem; font-weight: 700;
+      display: flex; align-items: center; gap: 10px; color: var(--txt);
+    }
+
+    .sec-title i { color: var(--primary); }
+
+    /* ── PROGRAMACION ── */
+    .prog-list {
+      display: flex; flex-direction: column; gap: 10px;
+      margin-bottom: 36px;
+    }
+
+    .prog-item {
+      display: flex; align-items: center; gap: 16px;
+      padding: 18px 22px;
+      background: var(--glass); border: 1px solid var(--glass-b);
+      border-radius: var(--radius);
+      transition: border-color var(--tr), background var(--tr), transform var(--tr);
+    }
+
+    .prog-item:hover { border-color: rgba(0,212,255,0.2); background: rgba(0,212,255,0.03); transform: translateX(4px); }
+
+    .prog-item.current {
+      border-color: rgba(0,212,255,0.35);
+      background: rgba(0,212,255,0.05);
+    }
+
+    .prog-time {
+      font-size: 0.95rem; font-weight: 700;
+      color: var(--primary); min-width: 72px;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .prog-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      background: var(--glass-b); flex-shrink: 0;
+      transition: background var(--tr);
+    }
+
+    .prog-item.current .prog-dot {
+      background: var(--primary);
+      box-shadow: 0 0 10px rgba(0,212,255,0.5);
+      animation: dotPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes dotPulse {
+      0%,100% { opacity:1; transform:scale(1); }
+      50% { opacity:0.5; transform:scale(1.3); }
+    }
+
+    .prog-info { flex: 1; min-width: 0; }
+    .prog-name { font-size: 0.95rem; font-weight: 600; color: var(--txt); margin-bottom: 2px; }
+    .prog-desc { font-size: 0.8rem; color: var(--txt3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    .prog-badge-live {
+      padding: 4px 10px;
+      background: rgba(255,8,68,0.12); border: 1px solid rgba(255,8,68,0.25);
+      border-radius: 6px; color: #ff4d6d;
+      font-size: 0.7rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.5px;
+      flex-shrink: 0;
+    }
+
+    .prog-badge-next {
+      padding: 4px 10px;
+      background: rgba(124,58,237,0.12); border: 1px solid rgba(124,58,237,0.25);
+      border-radius: 6px; color: #a78bfa;
+      font-size: 0.7rem; font-weight: 700; flex-shrink: 0;
+    }
+
+    /* Skeleton */
+    .skeleton {
+      background: linear-gradient(90deg, var(--glass) 25%, rgba(255,255,255,0.06) 50%, var(--glass) 75%);
+      background-size: 200% 100%; animation: shimmer 1.5s infinite;
+    }
+
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+    /* ── FEATURES ── */
+    .features-grid {
+      display: grid; grid-template-columns: repeat(3,1fr);
+      gap: 16px; margin-bottom: 36px;
+    }
+
+    .feat-card {
+      background: var(--glass); border: 1px solid var(--glass-b);
+      border-radius: var(--radius-lg); padding: 24px;
+      text-align: center;
+      transition: transform var(--tr), box-shadow var(--tr);
+    }
+
+    .feat-card:hover { transform: translateY(-4px); box-shadow: var(--glow); }
+
+    .feat-icon {
+      width: 56px; height: 56px; border-radius: 16px;
+      display: grid; place-items: center;
+      font-size: 1.5rem; margin: 0 auto 16px;
+    }
+
+    .fi-cyan   { background: rgba(0,212,255,0.1); color: var(--primary); }
+    .fi-purple { background: rgba(124,58,237,0.1); color: #a78bfa; }
+    .fi-green  { background: rgba(16,185,129,0.1); color: var(--success); }
+
+    .feat-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 8px; }
+    .feat-card p  { font-size: 0.85rem; color: var(--txt2); line-height: 1.6; }
+
+    /* ── TOAST ── */
+    .toast-wrap {
+      position: fixed; top: 20px; right: 20px;
+      z-index: 2000; display: flex; flex-direction: column;
+      gap: 10px; pointer-events: none;
+    }
+
+    .toast {
+      padding: 14px 20px; background: rgba(15,20,35,0.97);
+      border: 1px solid var(--glass-b); border-radius: var(--radius);
+      display: flex; align-items: center; gap: 10px;
+      animation: slideR 0.3s ease-out; font-size: 0.9rem;
+      max-width: 340px; pointer-events: all;
+    }
+
+    .light .toast { background: rgba(255,255,255,0.97); color: #0f172a; }
+
+    @keyframes slideR { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+    .toast.success { border-left: 3px solid var(--success); }
+    .toast.error   { border-left: 3px solid #ef4444; }
+    .toast.info    { border-left: 3px solid var(--primary); }
+
+    /* ── OVERLAY ── */
+    .overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.5); z-index: 1100; backdrop-filter: blur(4px);
+    }
+
+    .overlay.show { display: block; }
+
+    /* ── WHATSAPP ── */
+    .whatsapp {
+      position: fixed; right: 24px; bottom: 24px;
+      z-index: 1300; width: 54px; height: 54px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #25d366, #128c7e);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.6rem; color: white;
+      box-shadow: 0 8px 24px rgba(37,211,102,0.35);
+      transition: transform var(--tr), box-shadow var(--tr); text-decoration: none;
+    }
+
+    .whatsapp:hover { transform: scale(1.1); box-shadow: 0 12px 32px rgba(37,211,102,0.5); }
+
+    /* ── FOOTER ── */
+    footer {
+      margin-left: var(--sidebar);
+      padding: 28px 32px;
+      border-top: 1px solid var(--glass-b);
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 16px; flex-wrap: wrap;
+      background: var(--glass);
+    }
+
+    .footer-brand { display: flex; align-items: center; gap: 10px; }
+    .footer-brand img { width: 28px; height: 28px; object-fit: contain; }
+    .footer-brand span { font-weight: 700; font-size: 0.95rem; }
+
+    .footer-links { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+    .footer-links a { color: var(--txt3); font-size: 0.82rem; text-decoration: none; transition: color var(--tr); }
+    .footer-links a:hover { color: var(--primary); }
+
+    .footer-copy { color: var(--txt3); font-size: 0.82rem; }
+
+    /* ── LIGHT EXTRAS ── */
+    .light .nav-item { color: var(--txt2); }
+    .light .nav-item:hover, .light .nav-item.active { color: var(--txt); background: rgba(0,0,0,0.05); }
+    .light .stat-mini { background: rgba(255,255,255,0.7); }
+    .light .feat-card { background: rgba(255,255,255,0.7); }
+    .light .player-card { background: rgba(255,255,255,0.6); }
+    .light .prog-item { background: rgba(255,255,255,0.6); }
+    .light .vol-slider { background: rgba(0,0,0,0.15); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 960px) {
+      .menu-btn { display: flex; }
+      .sidebar { transform: translateX(-100%); transition: transform var(--tr); }
+      .sidebar.open { transform: translateX(0); box-shadow: 4px 0 40px rgba(0,0,0,0.5); }
+      .main { margin-left: 0; padding: 80px 16px 60px; }
+      .topbar { position: relative; top: 0; }
+      footer { margin-left: 0; flex-direction: column; text-align: center; }
+      .footer-links { justify-content: center; }
+      .radio-hero { padding: 32px 24px; gap: 28px; }
+      .disc-wrap { width: 140px; height: 140px; }
+      .disc { width: 140px; height: 140px; }
+    }
+
+    @media (max-width: 700px) {
+      .radio-hero { flex-direction: column; text-align: center; align-items: center; }
+      .radio-hero-info p { margin: 0 auto 28px; }
+      .stats-row { grid-template-columns: 1fr; }
+      .features-grid { grid-template-columns: 1fr; }
+      .player-card { gap: 16px; }
+      .player-viz { display: none; }
+      .vol-slider { width: 80px; }
+    }
+
+    @media (max-width: 480px) {
+      .radio-hero { padding: 24px 18px; }
+      .player-card { padding: 20px; }
+      .prog-item { padding: 14px 16px; gap: 12px; }
+      .prog-time { min-width: 58px; font-size: 0.85rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-mesh"></div>
+  <div class="toast-wrap" id="toastWrap"></div>
+  <div class="overlay" id="overlay"></div>
+
+  <button class="menu-btn" id="menuBtn" aria-label="Menú">
+    <span></span><span></span><span></span>
+  </button>
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar glass-strong" id="sidebar">
+    <div class="brand-box">
+      <div class="logo-wrap">
+        <img src="/logo.png" alt="World TV" onerror="this.style.display='none'">
+      </div>
+      <div class="brand-title grad-text">WORLD TV</div>
+      <div class="brand-sub">Streaming Premium</div>
+    </div>
+    <div class="nav">
+      <a href="/" class="nav-item">
+        <span class="nav-icon"><i class="fas fa-home"></i></span>Inicio
+      </a>
+      <a href="/en-vivo" class="nav-item">
+        <span class="nav-icon"><i class="fas fa-broadcast-tower"></i></span>En Vivo
+      </a>
+      <a href="#" class="nav-item active">
+        <span class="nav-icon"><i class="fas fa-radio"></i></span>Radio
+      </a>
+      <a href="/noticias" class="nav-item">
+        <span class="nav-icon"><i class="fas fa-newspaper"></i></span>Noticias
+      </a>
+      <a href="/politica-de-privacidad" class="nav-item">
+        <span class="nav-icon"><i class="fas fa-shield-alt"></i></span>Privacidad
+      </a>
+      <a href="/info" class="nav-item">
+        <span class="nav-icon"><i class="fas fa-info-circle"></i></span>Info
+      </a>
+    </div>
+    <div class="user-panel">
+      <p class="login-helper">Navegación</p>
+      <a href="/" style="display:flex;align-items:center;gap:10px;padding:10px;border-radius:10px;background:var(--glass);border:1px solid var(--glass-b);color:var(--txt);text-decoration:none;font-size:0.85rem;font-weight:600;transition:background var(--tr)">
+        <i class="fas fa-arrow-left" style="color:var(--primary)"></i> Volver al inicio
+      </a>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- TOPBAR -->
+    <header class="topbar glass">
+      <div class="brandmark">
+        <div class="brand-icon"><i class="fas fa-radio"></i></div>
+        <div class="brand-text">
+          <h1>Radio en Vivo</h1>
+          <span id="currentDate"></span>
+        </div>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn-icon" id="themeBtn" aria-label="Tema">
+          <i class="fas fa-moon"></i>
+        </button>
+
+        </a>
+      </div>
+    </header>
+
+    <!-- HERO -->
+    <section class="radio-hero">
+      <div class="disc-wrap">
+        <div class="disc-rings"></div>
+        <div class="disc-rings"></div>
+        <div class="disc" id="disc">
+          <div class="disc-inner">
+            <i class="fas fa-music"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="radio-hero-info">
+        <div class="live-badge">
+          <div class="live-dot"></div>
+          En vivo ahora
+        </div>
+        <h2>World TV <span class="grad-text">Radio</span></h2>
+        <p>La mejor música, noticias y entretenimiento las 24 horas del día, los 7 días de la semana. Completamente gratis y sin interrupciones.</p>
+        <div style="display:flex;gap:12px;flex-wrap:wrap">
+          <div style="display:flex;align-items:center;gap:8px;padding:8px 16px;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.2);border-radius:999px;font-size:0.85rem;font-weight:600;color:var(--success)">
+            <i class="fas fa-signal"></i> Streaming HD
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;padding:8px 16px;background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.2);border-radius:999px;font-size:0.85rem;font-weight:600;color:var(--primary)">
+            <i class="fas fa-globe"></i> Disponible mundial
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PLAYER CARD -->
+    <section class="player-card glass">
+      <div class="player-art">
+        <i class="fas fa-music"></i>
+      </div>
+
+      <div class="player-info">
+        <div class="player-title">World TV Radio</div>
+        <div class="player-sub">
+          <span class="on-air">● On Air</span>
+          <span id="playerStatus">Listo para reproducir</span>
+        </div>
+      </div>
+
+      <div class="player-viz" id="playerViz">
+        <div class="vbar" style="height:8px"></div>
+        <div class="vbar" style="height:8px"></div>
+        <div class="vbar" style="height:8px"></div>
+        <div class="vbar" style="height:8px"></div>
+        <div class="vbar" style="height:8px"></div>
+        <div class="vbar" style="height:8px"></div>
+        <div class="vbar" style="height:8px"></div>
+      </div>
+
+      <div class="player-controls">
+        <button class="ctrl-btn" id="muteBtn" title="Silenciar">
+          <i class="fas fa-volume-up"></i>
+        </button>
+        <button class="ctrl-btn play" id="playBtn" title="Reproducir">
+          <i class="fas fa-play"></i>
+        </button>
+      </div>
+
+      <div class="vol-wrap">
+        <i class="fas fa-volume-down vol-icon" id="volIcon"></i>
+        <input type="range" class="vol-slider" id="volCtrl" min="0" max="1" step="0.01" value="1">
+        <i class="fas fa-volume-up vol-icon"></i>
+      </div>
+    </section>
+
+    <!-- STATS -->
+    <div class="stats-row">
+      <div class="stat-mini">
+        <div class="stat-mini-icon smi-cyan"><i class="fas fa-headphones"></i></div>
+        <div class="smi-info">
+          <div class="smi-val" id="listenerCount">—</div>
+          <div class="smi-lbl">Escuchando ahora</div>
+        </div>
+      </div>
+      <div class="stat-mini">
+        <div class="stat-mini-icon smi-green"><i class="fas fa-clock"></i></div>
+        <div class="smi-info">
+          <div class="smi-val">24/7</div>
+          <div class="smi-lbl">Transmisión continua</div>
+        </div>
+      </div>
+      <div class="stat-mini">
+        <div class="stat-mini-icon smi-purple"><i class="fas fa-signal"></i></div>
+        <div class="smi-info">
+          <div class="smi-val">128kbps</div>
+          <div class="smi-lbl">Calidad de audio</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROGRAMACION FIREBASE -->
+    <div class="sec-header">
+      <h2 class="sec-title"><i class="fas fa-calendar-week"></i>Programación</h2>
+    </div>
+
+
+
+    <!-- FEATURES -->
+    <div class="sec-header">
+      <h2 class="sec-title"><i class="fas fa-star"></i>¿Por qué elegirnos?</h2>
+    </div>
+
+    <div class="features-grid">
+      <div class="feat-card">
+        <div class="feat-icon fi-cyan"><i class="fas fa-broadcast-tower"></i></div>
+        <h3>Señal Ininterrumpida</h3>
+        <p>Nuestra radio transmite las 24 horas sin cortes. Siempre conectado, siempre activo.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon fi-purple"><i class="fas fa-music"></i></div>
+        <h3>Variedad Musical</h3>
+        <p>Desde los últimos hits hasta clásicos de siempre. Música para todos los gustos.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon fi-green"><i class="fas fa-newspaper"></i></div>
+        <h3>Noticias al Instante</h3>
+        <p>Informativos cada hora con las últimas noticias locales e internacionales.</p>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-brand">
+      <img src="/logo.png" alt="World TV" onerror="this.style.display='none'">
+      <span class="grad-text">WORLD TV</span>
+    </div>
+    <div class="footer-links">
+      <a href="/">Inicio</a>
+      <a href="/en-vivo">En Vivo</a>
+      <a href="/noticias">Noticias</a>
+      <a href="/politica-de-privacidad">Privacidad</a>
+      <a href="/info">Info</a>
+      <a href="https://wa.me/595981197962" target="_blank" rel="noopener">
+        <i class="fab fa-whatsapp"></i> WhatsApp
+      </a>
+    </div>
+    <div class="footer-copy">© 2026 World TV. Todos los derechos reservados.</div>
+  </footer>
+
+  <!-- WHATSAPP -->
+  <a class="whatsapp" href="https://wa.me/595981197962" target="_blank" rel="noopener" aria-label="WhatsApp">
+    <i class="fab fa-whatsapp"></i>
+  </a>
+
+  <audio id="radioAudio" preload="none"></audio>
+
+  <script>
+  const STREAM = 'rtmp://ssh101.bozztv.com:1935/ssh101/worldtvradio';
+  const FB_CFG = {
+    apiKey: "AIzaSyCxAp5gwA4sJ2UUnRUTLRNBsZIl-di0aN4",
+    authDomain: "worldtv-d9f22.firebaseapp.com",
+    projectId: "worldtv-d9f22",
+    storageBucket: "worldtv-d9f22.appspot.com",
+    messagingSenderId: "1056595783914",
+    appId: "1:1056595783914:web:b2ba6bb924772df1152793"
+  };
+
+  const $ = id => document.getElementById(id);
+  const $$ = s => document.querySelectorAll(s);
+
+  // ── TOAST ──────────────────────────────────────────────
+  function toast(msg, type = 'info') {
+    const t = document.createElement('div');
+    t.className = `toast ${type}`;
+    const ic = { success:'check-circle', error:'exclamation-circle', info:'info-circle' };
+    const cl = { success:'#10b981', error:'#ef4444', info:'#00d4ff' };
+    t.innerHTML = `<i class="fas fa-${ic[type]}" style="color:${cl[type]}"></i><span>${msg}</span>`;
+    $('toastWrap').appendChild(t);
+    setTimeout(() => {
+      t.style.cssText += 'opacity:0;transform:translateX(120%);transition:all 0.3s';
+      setTimeout(() => t.remove(), 320);
+    }, 3200);
+  }
+
+  // ── DATE ───────────────────────────────────────────────
+  function setDate() {
+    $('currentDate').textContent = new Date().toLocaleDateString('es-ES', {
+      weekday:'long', year:'numeric', month:'long', day:'numeric'
+    });
+  }
+
+  // ── THEME ──────────────────────────────────────────────
+  function initTheme() {
+    if (localStorage.getItem('theme') === 'light') document.body.classList.add('light');
+    updateThemeIcon();
+    $('themeBtn').addEventListener('click', () => {
+      document.body.classList.toggle('light');
+      localStorage.setItem('theme', document.body.classList.contains('light') ? 'light' : 'dark');
+      updateThemeIcon();
+      toast(document.body.classList.contains('light') ? 'Modo claro' : 'Modo oscuro', 'info');
+    });
+  }
+
+  function updateThemeIcon() {
+    $('themeBtn').querySelector('i').className =
+      document.body.classList.contains('light') ? 'fas fa-sun' : 'fas fa-moon';
+  }
+
+  // ── MENU ───────────────────────────────────────────────
+  function initMenu() {
+    const btn = $('menuBtn'), sb = $('sidebar'), ov = $('overlay');
+    const open  = () => { sb.classList.add('open'); btn.classList.add('active'); ov.classList.add('show'); };
+    const close = () => { sb.classList.remove('open'); btn.classList.remove('active'); ov.classList.remove('show'); };
+    btn.addEventListener('click', () => sb.classList.contains('open') ? close() : open());
+    ov.addEventListener('click', close);
+  }
+
+  // ── RADIO PLAYER ───────────────────────────────────────
+  function initRadio() {
+    const audio   = $('radioAudio');
+    const playBtn = $('playBtn');
+    const muteBtn = $('muteBtn');
+    const volCtrl = $('volCtrl');
+    const status  = $('playerStatus');
+    const viz     = $('playerViz');
+    const disc    = $('disc');
+    const bars    = viz.querySelectorAll('.vbar');
+
+    let hlsInst  = null;
+    let vizTimer = null;
+    let playing  = false;
+
+    // Cargar stream
+    function loadStream() {
+      if (audio.canPlayType('application/vnd.apple.mpegurl')) {
+        audio.src = STREAM;
+      } else if (window.Hls && Hls.isSupported()) {
+        if (hlsInst) hlsInst.destroy();
+        hlsInst = new Hls({ enableWorker: true, lowLatencyMode: true, maxBufferLength: 10 });
+        hlsInst.loadSource(STREAM);
+        hlsInst.attachMedia(audio);
+        hlsInst.on(Hls.Events.ERROR, (_, data) => {
+          if (data.fatal) {
+            toast('Error de stream, reintentando...', 'error');
+            setTimeout(loadStream, 4000);
+          }
+        });
+      }
+    }
+
+    function startViz() {
+      if (vizTimer) return;
+      disc.classList.add('spinning');
+      vizTimer = setInterval(() => {
+        bars.forEach(b => { b.style.height = (10 + Math.random() * 90) + '%'; });
+      }, 100);
+    }
+
+    function stopViz() {
+      if (vizTimer) { clearInterval(vizTimer); vizTimer = null; }
+      disc.classList.remove('spinning');
+      bars.forEach(b => { b.style.height = '8px'; });
+    }
+
+    loadStream();
+
+    playBtn.addEventListener('click', async () => {
+      if (!playing) {
+        try {
+          await audio.play();
+          playing = true;
+          playBtn.querySelector('i').className = 'fas fa-pause';
+          status.textContent = 'En vivo · Reproduciendo';
+          startViz();
+          toast('¡Radio iniciada!', 'success');
+        } catch {
+          toast('Toca el botón para reproducir', 'info');
+        }
+      } else {
+        audio.pause();
+        playing = false;
+        playBtn.querySelector('i').className = 'fas fa-play';
+        status.textContent = 'Pausado';
+        stopViz();
+      }
+    });
+
+    muteBtn.addEventListener('click', () => {
+      audio.muted = !audio.muted;
+      muteBtn.querySelector('i').className = audio.muted ? 'fas fa-volume-mute' : 'fas fa-volume-up';
+      toast(audio.muted ? 'Silenciado' : 'Con sonido', 'info');
+    });
+
+    volCtrl.addEventListener('input', e => {
+      audio.volume = +e.target.value;
+      audio.muted  = +e.target.value === 0;
+      muteBtn.querySelector('i').className = audio.muted ? 'fas fa-volume-mute' : 'fas fa-volume-up';
+    });
+
+    // Click en ícono de volumen bajo = silenciar
+    $('volIcon').addEventListener('click', () => {
+      audio.muted = !audio.muted;
+      muteBtn.querySelector('i').className = audio.muted ? 'fas fa-volume-mute' : 'fas fa-volume-up';
+      if (audio.muted) volCtrl.value = 0; else { volCtrl.value = audio.volume || 0.8; audio.volume = +volCtrl.value; }
+    });
+  }
+
+  // ── FIREBASE ───────────────────────────────────────────
+  let db;
+
+  function initFirebase() {
+    if (typeof firebase === 'undefined') { console.warn('Firebase no disponible'); return; }
+    try {
+      firebase.initializeApp(FB_CFG);
+      db = firebase.firestore();
+      loadProgramacion();
+      initListeners();
+    } catch(e) { console.warn('Firebase:', e); }
+  }
+
+  // ── PROGRAMACION ───────────────────────────────────────
+  function loadProgramacion() {
+    const list = $('progList');
+
+    db.collection('programacion_radio')
+      .orderBy('orden', 'asc')
+      .onSnapshot(snapshot => {
+
+        if (snapshot.empty) {
+          // Si no existe la colección, mostrar grilla estática de ejemplo
+          renderStaticSchedule();
+          return;
+        }
+
+        const now  = new Date();
+        const hNow = now.getHours() * 60 + now.getMinutes();
+
+        list.innerHTML = snapshot.docs.map((doc, idx) => {
+          const d = doc.data();
+          const nombre = d.nombre || d.titulo || d.name || 'Programa';
+          const hora   = d.hora   || d.horario || d.time  || '';
+          const desc   = d.descripcion || d.desc || '';
+          const desde  = d.desde  || 0;  // minutos desde medianoche
+          const hasta  = d.hasta  || 0;
+
+          const isCurrent = desde !== 0 && hasta !== 0
+            ? (hNow >= desde && hNow < hasta)
+            : false;
+
+          const isNext = !isCurrent && idx === getNextIdx(snapshot.docs, hNow);
+
+          return `
+            <div class="prog-item ${isCurrent ? 'current' : ''}">
+              <div class="prog-time">${hora}</div>
+              <div class="prog-dot"></div>
+              <div class="prog-info">
+                <div class="prog-name">${nombre}</div>
+                ${desc ? `<div class="prog-desc">${desc}</div>` : ''}
+              </div>
+              ${isCurrent ? '<div class="prog-badge-live">En vivo</div>' : ''}
+              ${isNext    ? '<div class="prog-badge-next">Próximo</div>' : ''}
+            </div>`;
+        }).join('');
+
+      }, err => {
+        console.warn('programacion_radio:', err);
+        renderStaticSchedule();
+      });
+  }
+
+  function getNextIdx(docs, hNow) {
+    // Devuelve el índice del primer programa que empiece después de ahora
+    for (let i = 0; i < docs.length; i++) {
+      const d = docs[i].data();
+      if (d.desde && d.desde > hNow) return i;
+    }
+    return -1;
+  }
+
+  // Grilla estática si no hay colección en Firestore
+  function renderStaticSchedule() {
+    const list = $('progList');
+    const now  = new Date();
+    const hNow = now.getHours() * 60 + now.getMinutes();
+
+    const slots = [
+      { hora:'06:00', desde:360,  hasta:540,  nombre:'Buenos Días World TV', desc:'Arranca el día con lo mejor' },
+      { hora:'09:00', desde:540,  hasta:720,  nombre:'Música Non-Stop',       desc:'Los mejores hits sin parar' },
+      { hora:'12:00', desde:720,  hasta:840,  nombre:'Noticiero Mediodía',    desc:'Actualidad e información' },
+      { hora:'14:00', desde:840,  hasta:1020, nombre:'Tarde Tropical',        desc:'Ritmos latinos y caribeños' },
+      { hora:'17:00', desde:1020, hasta:1140, nombre:'Evening Hits',          desc:'Los éxitos de la tarde' },
+      { hora:'19:00', desde:1140, hasta:1260, nombre:'Noticiero Central',     desc:'Las noticias del día' },
+      { hora:'21:00', desde:1260, hasta:1440, nombre:'Noche Especial',        desc:'Música para la noche' },
+    ];
+
+    list.innerHTML = slots.map((s, idx) => {
+      const isCurrent = hNow >= s.desde && hNow < s.hasta;
+      const isNext    = !isCurrent && slots.findIndex(x => x.desde > hNow) === idx;
+      return `
+        <div class="prog-item ${isCurrent ? 'current' : ''}">
+          <div class="prog-time">${s.hora}</div>
+          <div class="prog-dot"></div>
+          <div class="prog-info">
+            <div class="prog-name">${s.nombre}</div>
+            <div class="prog-desc">${s.desc}</div>
+          </div>
+          ${isCurrent ? '<div class="prog-badge-live">En vivo</div>' : ''}
+          ${isNext    ? '<div class="prog-badge-next">Próximo</div>'  : ''}
+        </div>`;
+    }).join('');
+  }
+
+  // ── LISTENERS (oyentes) REALES ─────────────────────────
+  const SESSION_KEY = 'wtvr_sid';
+  let _ref = null, _hb = null;
+
+  async function initListeners() {
+    let sid = sessionStorage.getItem(SESSION_KEY);
+    if (!sid) {
+      sid = `r_${Date.now()}_${Math.random().toString(36).slice(2,7)}`;
+      sessionStorage.setItem(SESSION_KEY, sid);
+    }
+
+    _ref = db.collection('radio_listeners').doc(sid);
+
+    async function hb() {
+      try { await _ref.set({ ts: firebase.firestore.FieldValue.serverTimestamp(), active: true }); }
+      catch(e) { console.warn('HB:', e); }
+    }
+
+    await hb();
+    _hb = setInterval(hb, 45000);
+
+    function bye() { try { _ref.delete(); } catch(_){} clearInterval(_hb); }
+    window.addEventListener('pagehide', bye);
+    window.addEventListener('beforeunload', bye);
+
+    db.collection('radio_listeners').onSnapshot(snap => {
+      const cutoff = Date.now() - 90000;
+      let count = 0;
+      snap.forEach(doc => {
+        const ts = doc.data().ts;
+        if (!ts) return;
+        const ms = ts.toMillis ? ts.toMillis() : (ts.seconds||0)*1000;
+        if (ms >= cutoff) count++;
+      });
+      count = Math.max(count, 1);
+      $('listenerCount').textContent = count >= 1000 ? (count/1000).toFixed(1)+'K' : String(count);
+    }, () => { $('listenerCount').textContent = '—'; });
+  }
+
+  // ── INIT ───────────────────────────────────────────────
+  document.addEventListener('DOMContentLoaded', () => {
+    setDate();
+    initTheme();
+    initMenu();
+    initRadio();
+    initFirebase();
+  });
+  </script>
+</body>
+</html>
